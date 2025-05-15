@@ -19,12 +19,30 @@ val robotoFamily = FontFamily(
 
 @Immutable
 data class PetAITypography(
+    val headlineMedium: TextStyle = TextStyle(
+        fontFamily = robotoFamily,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 20.sp,
+        lineHeight = 32.sp
+    ),
     val textRegular: TextStyle = TextStyle(
         fontFamily = robotoFamily,
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp,
         lineHeight = 24.sp
-    )
+    ),
+    val textMedium: TextStyle = TextStyle(
+        fontFamily = robotoFamily,
+        fontWeight = FontWeight.Medium,
+        fontSize = 14.sp,
+        lineHeight = 20.sp
+    ),
+    val labelMedium: TextStyle = TextStyle(
+        fontFamily = robotoFamily,
+        fontWeight = FontWeight.Medium,
+        fontSize = 12.sp,
+        lineHeight = 18.sp
+    ),
 )
 
 internal val LocalPetAITypography = staticCompositionLocalOf { PetAITypography() }

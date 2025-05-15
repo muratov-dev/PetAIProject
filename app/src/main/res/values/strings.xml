@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">Pet AI Project</string>
+
+    <!--  Common  -->
+    <string name="common_see_all">See All</string>
 </resources>
