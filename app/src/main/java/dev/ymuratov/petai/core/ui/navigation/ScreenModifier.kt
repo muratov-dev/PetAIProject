@@ -9,5 +9,5 @@ import dev.ymuratov.petai.core.ui.theme.PetAITheme
 
 @Composable
 fun Modifier.commonModifier(): Modifier {
-    return fillMaxSize().background(color = PetAITheme.colors.backgroundPrimary).systemBarsPadding()
+    return fillMaxSize().background(color = PetAITheme.colors.backgroundPrimary)
 }

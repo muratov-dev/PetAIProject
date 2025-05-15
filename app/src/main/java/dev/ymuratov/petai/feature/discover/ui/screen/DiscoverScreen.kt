@@ -1,27 +1,31 @@
 package dev.ymuratov.petai.feature.discover.ui.screen
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -67,11 +71,45 @@ fun DiscoverContainer(modifier: Modifier = Modifier, viewModel: DiscoverViewMode
 private fun DiscoverContent(
     modifier: Modifier = Modifier, state: DiscoverState = DiscoverState(), onEvent: (DiscoverEvent) -> Unit = {}
 ) {
-    LazyColumn(modifier = modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(20.dp)) {
-        items(state.songCategories, key = { it.id }) { category ->
-            val filteredSongs = state.songs.filter { it.songCategories.contains(category.name) }
-            if (filteredSongs.isEmpty()) return@items
-            CategoryItem(category = category, songs = filteredSongs)
+    val listState = rememberLazyListState()
+    val isCollapsed by remember { derivedStateOf { listState.firstVisibleItemIndex > 0 } }
+    val animatedColor by animateColorAsState(
+        targetValue = if (isCollapsed) PetAITheme.colors.backgroundPrimary else Color.Transparent,
+        label = "",
+        animationSpec = tween(300)
+    )
+    Box() {
+        LazyColumn(
+            state = listState,
+            modifier = modifier.fillMaxSize().navigationBarsPadding(),
+            verticalArrangement = Arrangement.spacedBy(20.dp)
+        ) {
+            item {
+                Box(modifier = Modifier.fillMaxWidth()) {
+                    Image(
+                        painter = painterResource(R.drawable.im_discover_main),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            }
+            items(state.songCategories, key = { it.id }) { category ->
+                val filteredSongs = state.songs.filter { it.songCategories.contains(category.name) }
+                if (filteredSongs.isEmpty()) return@items
+                CategoryItem(category = category, songs = filteredSongs)
+            }
+        }
+        Box(
+            modifier = Modifier.fillMaxWidth().background(animatedColor).statusBarsPadding()
+        ) {
+            Row(modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp).fillMaxWidth()) {
+                Text(
+                    text = "PETTALK",
+                    color = Color.White,
+                    style = PetAITheme.typography.headlineMedium.copy(fontSize = 24.sp)
+                )
+            }
         }
     }
 }
