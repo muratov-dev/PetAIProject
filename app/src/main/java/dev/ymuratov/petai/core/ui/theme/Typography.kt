@@ -55,6 +55,12 @@ data class PetAITypography(
         fontSize = 12.sp,
         lineHeight = 18.sp
     ),
+    val labelSmall: TextStyle = TextStyle(
+        fontFamily = robotoFamily,
+        fontWeight = FontWeight.Medium,
+        fontSize = 10.sp,
+        lineHeight = 14.sp
+    ),
 )
 
 internal val LocalPetAITypography = staticCompositionLocalOf { PetAITypography() }

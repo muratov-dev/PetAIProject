@@ -5,14 +5,14 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import dev.ymuratov.petai.feature.discover.ui.screen.DiscoverContainer
-import dev.ymuratov.petai.feature.discover.ui.screen.DiscoverScreen
+import dev.ymuratov.petai.feature.root.ui.screen.RootContainer
+import dev.ymuratov.petai.feature.root.ui.screen.RootScreen
 
 @Composable
 fun PetAINavHost(startDestination: Any, navController: NavHostController, modifier: Modifier = Modifier) {
     NavHost(navController = navController, startDestination = startDestination, modifier = modifier) {
-        composable<DiscoverScreen> {
-            DiscoverContainer(modifier = Modifier.commonModifier())
+        composable<RootScreen> {
+            RootContainer(modifier = Modifier.commonModifier(), parentNavController = navController)
         }
     }
 }
