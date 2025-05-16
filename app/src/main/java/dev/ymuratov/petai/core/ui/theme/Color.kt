@@ -13,6 +13,7 @@ data class PetAIColors(
 
     val buttonPrimaryDefault: Color = Color.Unspecified,
     val buttonTextPrimary: Color = Color.Unspecified,
+    val buttonTextSecondary: Color = Color.Unspecified,
 ) {
 
     companion object {
@@ -24,6 +25,7 @@ data class PetAIColors(
 
             buttonPrimaryDefault = Color(0xFFC2FD54),
             buttonTextPrimary = Color(0xFF000000),
+            buttonTextSecondary = Color(0xFFFFFFFF),
         )
     }
 }

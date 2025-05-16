@@ -19,6 +19,12 @@ val robotoFamily = FontFamily(
 
 @Immutable
 data class PetAITypography(
+    val titleBlack: TextStyle = TextStyle(
+        fontFamily = robotoFamily,
+        fontWeight = FontWeight.Black,
+        fontSize = 24.sp,
+        lineHeight = 36.sp
+    ),
     val headlineMedium: TextStyle = TextStyle(
         fontFamily = robotoFamily,
         fontWeight = FontWeight.SemiBold,
@@ -36,6 +42,12 @@ data class PetAITypography(
         fontWeight = FontWeight.Medium,
         fontSize = 14.sp,
         lineHeight = 20.sp
+    ),
+    val buttonTextDefault: TextStyle = TextStyle(
+        fontFamily = robotoFamily,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 16.sp,
+        lineHeight = 24.sp
     ),
     val labelMedium: TextStyle = TextStyle(
         fontFamily = robotoFamily,

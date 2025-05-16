@@ -2,6 +2,7 @@ package dev.ymuratov.petai.feature.discover.ui.viewmodel
 
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.ymuratov.petai.core.ui.viewmodel.BaseViewModel
+import dev.ymuratov.petai.feature.discover.domain.model.SongCategoryModel
 import dev.ymuratov.petai.feature.discover.domain.repository.DiscoverRepository
 import dev.ymuratov.petai.feature.discover.ui.action.DiscoverAction
 import dev.ymuratov.petai.feature.discover.ui.event.DiscoverEvent
@@ -15,6 +16,7 @@ class DiscoverViewModel @Inject constructor(
 
     override fun obtainEvent(viewEvent: DiscoverEvent) {
         when (viewEvent) {
+            is DiscoverEvent.SelectCategory -> updateViewState { copy(selectedCategory = viewEvent.category) }
             DiscoverEvent.InitState -> initState()
         }
     }
@@ -22,6 +24,12 @@ class DiscoverViewModel @Inject constructor(
     private fun initState() = viewModelScoped {
         val songs = discoverRepository.getSongs()
         val categories = discoverRepository.getSongCategories()
-        updateViewState { copy(songs = songs, songCategories = categories) }
+        val bottomSheetCategories = songs.flatMap { it.songCategories }.distinct()
+        val bottomSheetCategoriesMapped = bottomSheetCategories.mapIndexed { index, category ->
+            SongCategoryModel(index, category)
+        }
+        updateViewState {
+            copy(songs = songs, songCategories = categories, bottomSheetCategories = bottomSheetCategoriesMapped)
+        }
     }
 }
