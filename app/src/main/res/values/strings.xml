@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">Pet AI Project</string>
+
+    <!--  Common  -->
+    <string name="common_see_all">See All</string>
+
+    <!--  Discover  -->
+    <string name="discover_label">Discover</string>
+
+    <!--  Create  -->
+    <string name="create_label">Discover</string>
+
+    <!--  Profile  -->
+    <string name="profile_label">My profile</string>
 </resources>

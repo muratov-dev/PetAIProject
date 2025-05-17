@@ -13,6 +13,14 @@ data class PetAIColors(
 
     val buttonPrimaryDefault: Color = Color.Unspecified,
     val buttonTextPrimary: Color = Color.Unspecified,
+    val buttonTextSecondary: Color = Color.Unspecified,
+
+    val bottomNavBarContainerPrimary: Color = Color.Unspecified,
+    val bottomNavBarContainerSecondary: Color = Color.Unspecified,
+    val bottomNavBarIcon: Color = Color.Unspecified,
+    val bottomNavBarIconSelected: Color = Color.Unspecified,
+    val bottomNavBarText: Color = Color.Unspecified,
+    val bottomNavBarTextSelected: Color = Color.Unspecified,
 ) {
 
     companion object {
@@ -24,6 +32,14 @@ data class PetAIColors(
 
             buttonPrimaryDefault = Color(0xFFC2FD54),
             buttonTextPrimary = Color(0xFF000000),
+            buttonTextSecondary = Color(0xFFFFFFFF),
+
+            bottomNavBarContainerPrimary = Color(0xFF7C7C7C),
+            bottomNavBarContainerSecondary = Color(0xE50A0905),
+            bottomNavBarIcon = Color(0xFF7E7E7E),
+            bottomNavBarIconSelected = Color(0xFFC2FD54),
+            bottomNavBarText = Color(0xFF7E7E7E),
+            bottomNavBarTextSelected = Color(0xFFC2FD54),
         )
     }
 }
