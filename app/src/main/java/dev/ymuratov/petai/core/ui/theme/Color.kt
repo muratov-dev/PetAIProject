@@ -13,8 +13,12 @@ data class PetAIColors(
     val buttonSecondaryDefault: Color = Color.Unspecified,
 
     val buttonPrimaryDefault: Color = Color.Unspecified,
+    val buttonPrimaryDisabled: Color = Color.Unspecified,
+
     val buttonTextPrimary: Color = Color.Unspecified,
     val buttonTextSecondary: Color = Color.Unspecified,
+
+    val iconButtonOnPrimary: Color = Color.Unspecified,
 
     val bottomNavBarContainerPrimary: Color = Color.Unspecified,
     val bottomNavBarContainerSecondary: Color = Color.Unspecified,
@@ -33,8 +37,12 @@ data class PetAIColors(
             buttonSecondaryDefault = Color(0x19FFFFFF),
 
             buttonPrimaryDefault = Color(0xFFC2FD54),
+            buttonPrimaryDisabled = Color(0x40C2FD54),
+
             buttonTextPrimary = Color(0xFF000000),
             buttonTextSecondary = Color(0xFFFFFFFF),
+
+            iconButtonOnPrimary = Color(0xFFFFFFFF),
 
             bottomNavBarContainerPrimary = Color(0xFF7C7C7C),
             bottomNavBarContainerSecondary = Color(0xE50A0905),

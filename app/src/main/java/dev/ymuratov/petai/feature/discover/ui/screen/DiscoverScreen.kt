@@ -1,8 +1,11 @@
 package dev.ymuratov.petai.feature.discover.ui.screen
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.*
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -12,6 +15,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -24,9 +28,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -36,15 +40,16 @@ import dev.chrisbanes.haze.hazeEffect
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import dev.ymuratov.petai.R
-import dev.ymuratov.petai.core.ui.component.PetAIAsyncImage
+import dev.ymuratov.petai.core.ui.component.topbar.PetAISecondaryTopAppBar
 import dev.ymuratov.petai.core.ui.theme.PetAITheme
-import dev.ymuratov.petai.feature.discover.domain.model.SongCategoryModel
-import dev.ymuratov.petai.feature.discover.domain.model.SongModel
+import dev.ymuratov.petai.feature.discover.ui.component.CategoryItem
+import dev.ymuratov.petai.feature.discover.ui.component.CategoryTagChip
+import dev.ymuratov.petai.feature.discover.ui.component.SongCard
 import dev.ymuratov.petai.feature.discover.ui.event.DiscoverEvent
 import dev.ymuratov.petai.feature.discover.ui.state.DiscoverState
 import dev.ymuratov.petai.feature.discover.ui.viewmodel.DiscoverViewModel
+import kotlinx.coroutines.delay
 import kotlinx.serialization.Serializable
-import kotlin.random.Random
 
 @Serializable
 object DiscoverScreen
@@ -76,6 +81,7 @@ fun DiscoverContainer(modifier: Modifier = Modifier, viewModel: DiscoverViewMode
 private fun DiscoverContent(
     modifier: Modifier = Modifier, state: DiscoverState = DiscoverState(), onEvent: (DiscoverEvent) -> Unit = {}
 ) {
+    var isButtonExpanded by remember { mutableStateOf(true) }
     val hazeState = rememberHazeState(true)
     val listState = rememberLazyListState()
     val gridState = rememberLazyGridState()
@@ -86,11 +92,17 @@ private fun DiscoverContent(
         animationSpec = tween(300)
     )
 
+    LaunchedEffect(isButtonExpanded) {
+        if (isButtonExpanded) {
+            delay(5000)
+            isButtonExpanded = false
+        }
+    }
+
     val sheetState = rememberModalBottomSheetState()
-    val scope = rememberCoroutineScope()
     var showBottomSheet by remember { mutableStateOf(false) }
 
-    Box() {
+    Box {
         LazyColumn(
             state = listState,
             modifier = modifier.fillMaxSize().navigationBarsPadding(),
@@ -117,8 +129,21 @@ private fun DiscoverContent(
                         modifier = Modifier.fillMaxWidth().align(Alignment.BottomCenter),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
+                        Text(
+                            text = "VocalPet",
+                            color = PetAITheme.colors.textPrimary,
+                            style = PetAITheme.typography.headlineSemiBold.copy(fontSize = 22.sp)
+                        )
+                        Spacer(Modifier.size(6.dp))
+                        Text(
+                            text = "Let your pet speak and bring more fun!",
+                            color = PetAITheme.colors.textPrimary.copy(alpha = 0.7f),
+                            style = PetAITheme.typography.textRegular
+                        )
+                        Spacer(Modifier.size(20.dp))
                         Button(
-                            onClick = {}, shape = RoundedCornerShape(100.dp),
+                            onClick = { },
+                            shape = RoundedCornerShape(100.dp),
                             contentPadding = PaddingValues(vertical = 12.dp, horizontal = 40.dp),
                             border = BorderStroke(2.dp, PetAITheme.colors.buttonPrimaryDefault),
                             modifier = Modifier.clip(RoundedCornerShape(100.dp)).hazeEffect(hazeState),
@@ -146,32 +171,40 @@ private fun DiscoverContent(
                 }
             }
         }
-        Box(
-            modifier = Modifier.fillMaxWidth().background(animatedColor).statusBarsPadding()
-        ) {
-            Row(
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp).fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+        PetAISecondaryTopAppBar(backgroundColor = animatedColor, title = {
+            Text(
+                text = "PETTALK",
+                color = Color.White,
+                style = PetAITheme.typography.titleBlack,
+                modifier = Modifier.wrapContentHeight(Alignment.CenterVertically)
+            )
+        }, endAction = {
+            Button(
+                onClick = {
+                    if (isButtonExpanded) {
+                    } else {
+                        isButtonExpanded = true
+                    }
+                },
+                shape = RoundedCornerShape(100.dp),
+                contentPadding = PaddingValues(vertical = 8.dp, horizontal = 16.dp),
+                colors = ButtonColors(
+                    containerColor = PetAITheme.colors.buttonPrimaryDefault,
+                    contentColor = PetAITheme.colors.buttonTextPrimary,
+                    disabledContainerColor = Color.White,
+                    disabledContentColor = Color.Black
+                ),
+                modifier = Modifier.wrapContentSize()
             ) {
-                Text(text = "PETTALK", color = Color.White, style = PetAITheme.typography.titleBlack)
-                Button(
-                    onClick = {}, shape = RoundedCornerShape(100.dp),
-                    contentPadding = PaddingValues(vertical = 8.dp, horizontal = 16.dp),
-                    colors = ButtonColors(
-                        containerColor = PetAITheme.colors.buttonPrimaryDefault,
-                        contentColor = PetAITheme.colors.buttonTextPrimary,
-                        disabledContainerColor = Color.White,
-                        disabledContentColor = Color.Black
-                    ),
+                Row(
+                    modifier = Modifier.animateContentSize(tween(300)),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(4.dp),
-                    ) {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(R.drawable.ic_ribbon), contentDescription = null
-                        )
+                    Icon(
+                        imageVector = ImageVector.vectorResource(R.drawable.ic_ribbon), contentDescription = null
+                    )
+                    if (isButtonExpanded) {
                         Text(
                             text = "Get PRO",
                             color = PetAITheme.colors.buttonTextPrimary,
@@ -180,6 +213,19 @@ private fun DiscoverContent(
                     }
                 }
             }
+        })
+        FloatingActionButton(
+            onClick = {},
+            shape = CircleShape,
+            modifier = Modifier.padding(bottom = 72.dp).align(Alignment.BottomCenter).padding(16.dp),
+            contentColor = PetAITheme.colors.buttonTextPrimary,
+            containerColor = PetAITheme.colors.buttonPrimaryDefault
+        ) {
+            Icon(
+                imageVector = ImageVector.vectorResource(R.drawable.ic_plus),
+                contentDescription = null,
+                modifier = Modifier.size(16.dp)
+            )
         }
         if (showBottomSheet) {
             ModalBottomSheet(
@@ -236,99 +282,5 @@ private fun DiscoverContent(
                 }
             }
         }
-    }
-}
-
-@Composable
-fun CategoryTagChip(modifier: Modifier = Modifier, label: String, selected: Boolean, onChipClick: () -> Unit) {
-    Box(
-        modifier = modifier.widthIn(min = 64.dp).wrapContentHeight().background(
-            color = if (selected) PetAITheme.colors.buttonPrimaryDefault else Color.White.copy(alpha = 0.15f),
-            shape = RoundedCornerShape(100.dp)
-        ).clip(RoundedCornerShape(100.dp)).clickable(onClick = onChipClick).padding(12.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = label,
-            style = PetAITheme.typography.textMedium,
-            color = if (selected) PetAITheme.colors.buttonTextPrimary else PetAITheme.colors.buttonTextSecondary
-        )
-    }
-}
-
-@Composable
-private fun CategoryItem(
-    modifier: Modifier = Modifier,
-    category: SongCategoryModel,
-    songs: List<SongModel>,
-    seeAllClick: (SongCategoryModel) -> Unit = {}
-) {
-    Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(20.dp)) {
-        Row(
-            modifier = Modifier.padding(16.dp).fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = category.name,
-                style = PetAITheme.typography.headlineSemiBold,
-                color = PetAITheme.colors.textPrimary,
-                modifier = Modifier.weight(1f)
-            )
-            Text(
-                text = stringResource(R.string.common_see_all),
-                style = PetAITheme.typography.labelMedium,
-                color = PetAITheme.colors.textPrimary.copy(alpha = 0.7f),
-                modifier = Modifier.clickable(onClick = { seeAllClick(category) })
-            )
-        }
-
-        LazyRow(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            item {
-                Spacer(Modifier.size(8.dp))
-            }
-            items(songs, key = { it.id }) { song ->
-                SongCard(song = song)
-            }
-            item {
-                Spacer(Modifier.size(8.dp))
-            }
-        }
-    }
-}
-
-@Composable
-private fun SongCard(modifier: Modifier = Modifier, song: SongModel) {
-    Box(modifier = modifier.size(width = 168.dp, height = 208.dp).clip(RoundedCornerShape(32.dp))) {
-        PetAIAsyncImage(modifier = Modifier.matchParentSize(), data = song.videos.first().imageUrl)
-        Canvas(modifier = Modifier.fillMaxWidth().fillMaxHeight(0.5f).align(Alignment.BottomCenter), onDraw = {
-            drawRect(Brush.verticalGradient(listOf(Color.Transparent, Color(0xCC040401))))
-        })
-        Row(
-            modifier = Modifier.padding(16.dp).wrapContentSize().background(
-                color = PetAITheme.colors.backgroundPrimary.copy(alpha = 0.5f), shape = RoundedCornerShape(25.dp)
-            ).padding(5.dp)
-        ) {
-            Icon(
-                imageVector = ImageVector.vectorResource(R.drawable.ic_music),
-                contentDescription = null,
-                tint = PetAITheme.colors.textPrimary,
-                modifier = Modifier.size(14.dp)
-            )
-            Spacer(Modifier.size(1.dp))
-            val listensCount = Random.nextInt(10, 900)
-            Text(
-                text = "${listensCount}k",
-                style = PetAITheme.typography.labelMedium,
-                color = PetAITheme.colors.textPrimary
-            )
-        }
-
-        Text(
-            text = song.name,
-            style = PetAITheme.typography.textMedium,
-            color = PetAITheme.colors.textPrimary,
-            modifier = Modifier.padding(16.dp).align(Alignment.BottomStart)
-        )
     }
 }
