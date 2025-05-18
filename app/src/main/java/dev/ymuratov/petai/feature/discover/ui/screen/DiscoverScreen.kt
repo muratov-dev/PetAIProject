@@ -271,7 +271,7 @@ private fun CategoryItem(
         ) {
             Text(
                 text = category.name,
-                style = PetAITheme.typography.headlineMedium,
+                style = PetAITheme.typography.headlineSemiBold,
                 color = PetAITheme.colors.textPrimary,
                 modifier = Modifier.weight(1f)
             )

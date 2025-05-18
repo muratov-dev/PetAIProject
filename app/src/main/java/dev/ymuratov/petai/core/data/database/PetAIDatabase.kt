@@ -7,10 +7,14 @@ import dev.ymuratov.petai.feature.discover.data.local.DiscoverDao
 import dev.ymuratov.petai.feature.discover.data.local.VideoTypeConverters
 import dev.ymuratov.petai.feature.discover.data.model.entity.SongCategoryEntity
 import dev.ymuratov.petai.feature.discover.data.model.entity.SongEntity
+import dev.ymuratov.petai.feature.profile.data.local.MyWorksDao
+import dev.ymuratov.petai.feature.profile.data.model.MyWorkEntity
 import online.meditorium.core.data.database.converter.IntListTypeConverter
 import online.meditorium.core.data.database.converter.StringListTypeConverter
 
-@Database(entities = [SongCategoryEntity::class, SongEntity::class], version = 1, exportSchema = false)
+@Database(
+    entities = [SongCategoryEntity::class, SongEntity::class, MyWorkEntity::class], version = 2, exportSchema = false
+)
 @TypeConverters(
     IntListTypeConverter::class,
     StringListTypeConverter::class,
@@ -18,4 +22,5 @@ import online.meditorium.core.data.database.converter.StringListTypeConverter
 )
 abstract class PetAIDatabase : RoomDatabase() {
     abstract val discoverDao: DiscoverDao
+    abstract val myWorksDao: MyWorksDao
 }

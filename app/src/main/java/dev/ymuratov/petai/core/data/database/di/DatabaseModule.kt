@@ -21,4 +21,7 @@ object DatabaseModule {
 
     @Provides
     fun provideDiscoverDao(database: PetAIDatabase) = database.discoverDao
+
+    @Provides
+    fun provideMyWorksDao(database: PetAIDatabase) = database.myWorksDao
 }

@@ -10,6 +10,7 @@ data class PetAIColors(
     val textPrimary: Color = Color.Unspecified,
 
     val backgroundPrimary: Color = Color.Unspecified,
+    val buttonSecondaryDefault: Color = Color.Unspecified,
 
     val buttonPrimaryDefault: Color = Color.Unspecified,
     val buttonTextPrimary: Color = Color.Unspecified,
@@ -29,6 +30,7 @@ data class PetAIColors(
             textPrimary = Color(0xFFFFFFFF),
 
             backgroundPrimary = Color(0xFF040400),
+            buttonSecondaryDefault = Color(0x19FFFFFF),
 
             buttonPrimaryDefault = Color(0xFFC2FD54),
             buttonTextPrimary = Color(0xFF000000),
