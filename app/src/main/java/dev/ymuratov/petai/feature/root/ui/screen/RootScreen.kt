@@ -16,6 +16,7 @@ import dev.chrisbanes.haze.rememberHazeState
 import dev.ymuratov.petai.core.ui.navigation.commonModifier
 import dev.ymuratov.petai.feature.create.ui.screen.CreateContainer
 import dev.ymuratov.petai.feature.discover.ui.screen.DiscoverContainer
+import dev.ymuratov.petai.feature.profile.ui.screen.MyWorksScreen
 import dev.ymuratov.petai.feature.profile.ui.screen.ProfileContainer
 import dev.ymuratov.petai.feature.root.ui.BottomNavigationItem
 import dev.ymuratov.petai.feature.root.ui.component.PetAIBottomNavigation
@@ -61,7 +62,9 @@ private fun RootContent(modifier: Modifier = Modifier, parentNavController: NavH
                 CreateContainer(modifier = Modifier.commonModifier())
             }
             composable(BottomNavigationItem.Profile.route) {
-                ProfileContainer(modifier = Modifier.commonModifier())
+                ProfileContainer(modifier = Modifier.commonModifier(), navigateToMyWorks = {
+                    parentNavController.navigate(MyWorksScreen)
+                })
             }
         }
     }

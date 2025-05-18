@@ -21,12 +21,12 @@ import kotlinx.serialization.Serializable
 object ProfileScreen
 
 @Composable
-fun ProfileContainer(modifier: Modifier = Modifier) {
-    ProfileContent(modifier = modifier)
+fun ProfileContainer(modifier: Modifier = Modifier, navigateToMyWorks: () -> Unit) {
+    ProfileContent(modifier = modifier, navigateToMyWorks = navigateToMyWorks)
 }
 
 @Composable
-private fun ProfileContent(modifier: Modifier = Modifier) {
+private fun ProfileContent(modifier: Modifier = Modifier, navigateToMyWorks: () -> Unit) {
     Column(modifier = modifier) {
         Row(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp).fillMaxWidth(),
@@ -37,7 +37,7 @@ private fun ProfileContent(modifier: Modifier = Modifier) {
         }
         Spacer(modifier = Modifier.height(24.dp))
         Button(
-            onClick = {},
+            onClick = { navigateToMyWorks() },
             shape = RoundedCornerShape(14.dp),
             contentPadding = PaddingValues(vertical = 16.dp, horizontal = 10.dp),
             colors = ButtonDefaults.buttonColors().copy(

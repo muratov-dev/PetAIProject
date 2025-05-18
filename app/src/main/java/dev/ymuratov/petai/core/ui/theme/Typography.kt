@@ -25,9 +25,15 @@ data class PetAITypography(
         fontSize = 24.sp,
         lineHeight = 36.sp
     ),
-    val headlineMedium: TextStyle = TextStyle(
+    val headlineSemiBold: TextStyle = TextStyle(
         fontFamily = robotoFamily,
         fontWeight = FontWeight.SemiBold,
+        fontSize = 20.sp,
+        lineHeight = 32.sp
+    ),
+    val headlineMedium: TextStyle = TextStyle(
+        fontFamily = robotoFamily,
+        fontWeight = FontWeight.Medium,
         fontSize = 20.sp,
         lineHeight = 32.sp
     ),
