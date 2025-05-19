@@ -42,6 +42,9 @@ import dev.chrisbanes.haze.rememberHazeState
 import dev.ymuratov.petai.R
 import dev.ymuratov.petai.core.ui.component.topbar.PetAISecondaryTopAppBar
 import dev.ymuratov.petai.core.ui.theme.PetAITheme
+import dev.ymuratov.petai.core.ui.utils.collectFlowWithLifecycle
+import dev.ymuratov.petai.feature.discover.domain.model.SongModel
+import dev.ymuratov.petai.feature.discover.ui.action.DiscoverAction
 import dev.ymuratov.petai.feature.discover.ui.component.CategoryItem
 import dev.ymuratov.petai.feature.discover.ui.component.CategoryTagChip
 import dev.ymuratov.petai.feature.discover.ui.component.SongCard
@@ -55,8 +58,18 @@ import kotlinx.serialization.Serializable
 object DiscoverScreen
 
 @Composable
-fun DiscoverContainer(modifier: Modifier = Modifier, viewModel: DiscoverViewModel = hiltViewModel()) {
+fun DiscoverContainer(
+    modifier: Modifier = Modifier,
+    viewModel: DiscoverViewModel = hiltViewModel(),
+    navigateToSongInfo: (SongModel) -> Unit
+) {
     val state by viewModel.viewState.collectAsStateWithLifecycle()
+    viewModel.viewActions.collectFlowWithLifecycle(viewModel) { action ->
+        when (action) {
+            is DiscoverAction.NavigateToSongInfo -> navigateToSongInfo(action.song)
+            null -> {}
+        }
+    }
 
     val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner) {
@@ -166,7 +179,10 @@ private fun DiscoverContent(
             items(state.songCategories, key = { it.id }) { category ->
                 val filteredSongs = state.songs.filter { it.songCategories.contains(category.name) }
                 if (filteredSongs.isEmpty()) return@items
-                CategoryItem(category = category, songs = filteredSongs) {
+                CategoryItem(
+                    category = category,
+                    songs = filteredSongs,
+                    onSongClick = { onEvent(DiscoverEvent.NavigateToSongInfo(it)) }) {
                     showBottomSheet = true
                 }
             }

@@ -1,13 +1,7 @@
 package dev.ymuratov.petai.feature.discover.ui.component
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
@@ -26,6 +20,7 @@ fun CategoryItem(
     modifier: Modifier = Modifier,
     category: SongCategoryModel,
     songs: List<SongModel>,
+    onSongClick: (SongModel) -> Unit = {},
     seeAllClick: (SongCategoryModel) -> Unit = {}
 ) {
     Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(20.dp)) {
@@ -53,7 +48,7 @@ fun CategoryItem(
                 Spacer(Modifier.size(8.dp))
             }
             items(songs, key = { it.id }) { song ->
-                SongCard(song = song)
+                SongCard(song = song, onSongClick = onSongClick)
             }
             item {
                 Spacer(Modifier.size(8.dp))

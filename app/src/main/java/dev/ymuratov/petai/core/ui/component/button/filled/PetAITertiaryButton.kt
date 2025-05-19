@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.Dp
@@ -15,11 +16,11 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun PetAITertiaryButton(
-    centerContent: @Composable () -> Unit,
+    centerContent: @Composable RowScope.() -> Unit,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    colors: PetAIButtonColors = PetAIButtonDefaults.colors(),
+    colors: PetAIButtonColors = PetAIButtonDefaults.colors(containerColor = Color.White.copy(alpha = 0.15f)),
     shape: Shape = RoundedCornerShape(20.dp),
     minHeight: Dp = PetAIButtonDefaults.MinHeight,
     paddingValues: PaddingValues = PaddingValues(0.dp)
@@ -30,7 +31,13 @@ fun PetAITertiaryButton(
         contentAlignment = Alignment.Center
     ) {
         Box(modifier = Modifier.matchParentSize().clickable(enabled = enabled, onClick = onClick, role = Role.Button))
-        centerContent()
+        Row(
+            modifier = Modifier.matchParentSize().align(Alignment.Center),
+            horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            centerContent()
+        }
     }
 }
 

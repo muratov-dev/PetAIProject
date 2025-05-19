@@ -2,6 +2,7 @@ package dev.ymuratov.petai.feature.discover.ui.component
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
@@ -22,8 +23,11 @@ import dev.ymuratov.petai.feature.discover.domain.model.SongModel
 import kotlin.random.Random
 
 @Composable
-fun SongCard(modifier: Modifier = Modifier, song: SongModel) {
-    Box(modifier = modifier.size(width = 168.dp, height = 208.dp).clip(RoundedCornerShape(32.dp))) {
+fun SongCard(modifier: Modifier = Modifier, song: SongModel, onSongClick: (SongModel) -> Unit = {}) {
+    Box(
+        modifier = modifier.size(width = 168.dp, height = 208.dp).clickable(onClick = { onSongClick(song) })
+            .clip(RoundedCornerShape(32.dp))
+    ) {
         PetAIAsyncImage(modifier = Modifier.matchParentSize(), data = song.videos.first().imageUrl)
         Canvas(modifier = Modifier.fillMaxWidth().fillMaxHeight(0.5f).align(Alignment.BottomCenter), onDraw = {
             drawRect(Brush.verticalGradient(listOf(Color.Transparent, Color(0xCC040401))))

@@ -4,7 +4,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -40,17 +42,19 @@ fun PetAISecondaryButton(
     ) {
         Box(modifier = Modifier.matchParentSize())
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
-            startContent?.let {
-                startContent()
-            }
-            PetAIButtonText(
-                text = text,
-                style = PetAITheme.typography.buttonTextRegular,
-                textAlign = TextAlign.Start,
-                modifier = Modifier.weight(1f)
-            )
-            endContent?.let {
-                endContent()
+            CompositionLocalProvider(LocalContentColor provides colors.contentColor(enabled)){
+                startContent?.let {
+                    startContent()
+                }
+                PetAIButtonText(
+                    text = text,
+                    style = PetAITheme.typography.buttonTextRegular,
+                    textAlign = TextAlign.Start,
+                    modifier = Modifier.weight(1f)
+                )
+                endContent?.let {
+                    endContent()
+                }
             }
         }
     }

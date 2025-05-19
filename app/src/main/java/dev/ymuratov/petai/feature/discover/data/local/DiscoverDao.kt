@@ -15,6 +15,9 @@ interface DiscoverDao {
     @Query("select * from song_categories")
     suspend fun getCategories(): List<SongCategoryEntity>
 
+    @Query("select * from songs where id = :songId limit 1")
+    suspend fun getSongInfo(songId: Int): SongEntity
+
     @Upsert
     suspend fun saveSongs(songs: List<SongEntity>)
 

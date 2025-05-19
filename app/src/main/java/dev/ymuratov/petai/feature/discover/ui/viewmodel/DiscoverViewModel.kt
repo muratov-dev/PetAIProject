@@ -19,6 +19,8 @@ class DiscoverViewModel @Inject constructor(
         when (viewEvent) {
             is DiscoverEvent.SelectCategory -> updateViewState { copy(selectedCategory = viewEvent.category) }
             DiscoverEvent.InitState -> initState()
+
+            is DiscoverEvent.NavigateToSongInfo -> sendAction(DiscoverAction.NavigateToSongInfo(viewEvent.song))
         }
     }
 

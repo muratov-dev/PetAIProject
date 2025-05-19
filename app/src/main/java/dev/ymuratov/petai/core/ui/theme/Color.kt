@@ -34,10 +34,11 @@ data class PetAIColors(
             textPrimary = Color(0xFFFFFFFF),
 
             backgroundPrimary = Color(0xFF040400),
-            buttonSecondaryDefault = Color(0x19FFFFFF),
 
             buttonPrimaryDefault = Color(0xFFC2FD54),
             buttonPrimaryDisabled = Color(0x40C2FD54),
+
+            buttonSecondaryDefault = Color(0x19FFFFFF),
 
             buttonTextPrimary = Color(0xFF000000),
             buttonTextSecondary = Color(0xFFFFFFFF),
