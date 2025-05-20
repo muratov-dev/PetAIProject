@@ -3,6 +3,18 @@
 
     <!--  Common  -->
     <string name="common_see_all">See All</string>
+    <string name="common_continue">Continue</string>
+    <string name="common_privacy_policy"><![CDATA[<a href="http://yeahapps.me/privacy">Privacy Policy</a>]]></string>
+    <string name="common_terms_of_use"><![CDATA[<a href="http://yeahapps.me/terms">Terms of Use</a>]]></string>
+    <string name="common_limiter_version">Limited version</string>
+
+    <!--  Onboarding  -->
+    <string name="onboarding_title_1">Make Your Pet Talk!</string>
+    <string name="onboarding_description_1">Upload a photo and let your pet or character lip-sync for fun!</string>
+    <string name="onboarding_title_2">AI-Powered Lip Sync</string>
+    <string name="onboarding_description_2">Smartly sync lips with audio for natural and engaging animations</string>
+    <string name="onboarding_title_3">Share and Spread the Fun!</string>
+    <string name="onboarding_description_3">Unlock all features just $19.99 per week, cancel anytime.</string>
 
     <!--  Discover  -->
     <string name="discover_label">Discover</string>

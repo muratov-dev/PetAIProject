@@ -9,6 +9,10 @@ import dev.ymuratov.petai.feature.discover.domain.model.DiscoverNavType
 import dev.ymuratov.petai.feature.discover.domain.model.SongModel
 import dev.ymuratov.petai.feature.discover.ui.screen.SongInfoContainer
 import dev.ymuratov.petai.feature.discover.ui.screen.SongInfoScreen
+import dev.ymuratov.petai.feature.onboarding.ui.screen.OnboardingContainer
+import dev.ymuratov.petai.feature.onboarding.ui.screen.OnboardingScreen
+import dev.ymuratov.petai.feature.onboarding.ui.screen.OnboardingSubscriptionContainer
+import dev.ymuratov.petai.feature.onboarding.ui.screen.OnboardingSubscriptionScreen
 import dev.ymuratov.petai.feature.profile.ui.screen.MyWorksContainer
 import dev.ymuratov.petai.feature.profile.ui.screen.MyWorksScreen
 import dev.ymuratov.petai.feature.root.ui.screen.RootContainer
@@ -18,6 +22,14 @@ import kotlin.reflect.typeOf
 @Composable
 fun PetAINavHost(startDestination: Any, navController: NavHostController, modifier: Modifier = Modifier) {
     NavHost(navController = navController, startDestination = startDestination, modifier = modifier) {
+        composable<OnboardingScreen> {
+            OnboardingContainer(modifier = Modifier.commonModifier(), navigateToSubsOnboarding = {
+                navController.navigate(OnboardingSubscriptionScreen)
+            })
+        }
+        composable<OnboardingSubscriptionScreen> {
+            OnboardingSubscriptionContainer(modifier = Modifier.commonModifier())
+        }
         composable<RootScreen> {
             RootContainer(modifier = Modifier.commonModifier(), parentNavController = navController)
         }
