@@ -3,14 +3,14 @@ package dev.ymuratov.petai.core.data.database
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import dev.ymuratov.petai.core.data.database.converter.IntListTypeConverter
+import dev.ymuratov.petai.core.data.database.converter.StringListTypeConverter
 import dev.ymuratov.petai.feature.discover.data.local.DiscoverDao
 import dev.ymuratov.petai.feature.discover.data.local.VideoTypeConverters
 import dev.ymuratov.petai.feature.discover.data.model.entity.SongCategoryEntity
 import dev.ymuratov.petai.feature.discover.data.model.entity.SongEntity
 import dev.ymuratov.petai.feature.profile.data.local.MyWorksDao
 import dev.ymuratov.petai.feature.profile.data.model.MyWorkEntity
-import online.meditorium.core.data.database.converter.IntListTypeConverter
-import online.meditorium.core.data.database.converter.StringListTypeConverter
 
 @Database(
     entities = [SongCategoryEntity::class, SongEntity::class, MyWorkEntity::class], version = 2, exportSchema = false

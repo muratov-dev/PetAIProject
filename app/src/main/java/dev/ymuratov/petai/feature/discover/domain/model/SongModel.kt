@@ -1,6 +1,8 @@
 package dev.ymuratov.petai.feature.discover.domain.model
 
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class SongModel(
     val id: Int,
     val name: String,

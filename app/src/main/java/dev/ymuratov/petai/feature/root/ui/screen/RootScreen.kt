@@ -16,6 +16,7 @@ import dev.chrisbanes.haze.rememberHazeState
 import dev.ymuratov.petai.core.ui.navigation.commonModifier
 import dev.ymuratov.petai.feature.create.ui.screen.CreateContainer
 import dev.ymuratov.petai.feature.discover.ui.screen.DiscoverContainer
+import dev.ymuratov.petai.feature.discover.ui.screen.SongInfoScreen
 import dev.ymuratov.petai.feature.profile.ui.screen.MyWorksScreen
 import dev.ymuratov.petai.feature.profile.ui.screen.ProfileContainer
 import dev.ymuratov.petai.feature.root.ui.BottomNavigationItem
@@ -56,7 +57,9 @@ private fun RootContent(modifier: Modifier = Modifier, parentNavController: NavH
             modifier = Modifier.fillMaxSize().padding(top = innerPadding.calculateTopPadding())
         ) {
             composable(BottomNavigationItem.Discover.route) {
-                DiscoverContainer(modifier = Modifier.commonModifier())
+                DiscoverContainer(modifier = Modifier.commonModifier(), navigateToSongInfo = {
+                    parentNavController.navigate(SongInfoScreen(it))
+                })
             }
             composable(BottomNavigationItem.Create.route) {
                 CreateContainer(modifier = Modifier.commonModifier())
