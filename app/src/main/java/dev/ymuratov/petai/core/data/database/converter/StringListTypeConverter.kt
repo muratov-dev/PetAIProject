@@ -1,4 +1,4 @@
-package online.meditorium.core.data.database.converter
+package dev.ymuratov.petai.core.data.database.converter
 
 import androidx.room.TypeConverter
 import kotlinx.serialization.encodeToString

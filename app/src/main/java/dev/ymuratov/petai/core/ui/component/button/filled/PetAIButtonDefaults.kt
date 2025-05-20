@@ -11,7 +11,6 @@ object PetAIButtonDefaults {
 
     val MinHeight = 62.dp
     val Shape = RoundedCornerShape(100.dp)
-    val IconSize = 24.dp
 
     @Composable
     fun colors(
