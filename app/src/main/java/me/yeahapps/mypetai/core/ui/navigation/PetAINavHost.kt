@@ -1,5 +1,6 @@
 package me.yeahapps.mypetai.core.ui.navigation
 
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -23,9 +24,10 @@ import kotlin.reflect.typeOf
 fun PetAINavHost(startDestination: Any, navController: NavHostController, modifier: Modifier = Modifier) {
     NavHost(navController = navController, startDestination = startDestination, modifier = modifier) {
         composable<OnboardingScreen> {
-            OnboardingContainer(modifier = Modifier.commonModifier(), navigateToSubsOnboarding = {
-                navController.navigate(OnboardingSubscriptionScreen)
-            })
+            OnboardingContainer(
+                modifier = Modifier.commonModifier(), navigateToSubsOnboarding = {
+                    navController.navigate(OnboardingSubscriptionScreen)
+                })
         }
         composable<OnboardingSubscriptionScreen> {
             OnboardingSubscriptionContainer(modifier = Modifier.commonModifier())

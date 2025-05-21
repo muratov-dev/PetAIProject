@@ -1,5 +1,6 @@
 package me.yeahapps.mypetai.feature.discover.ui.screen
 
+import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.tween
@@ -39,6 +40,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.chrisbanes.haze.hazeEffect
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
+import kotlinx.coroutines.delay
+import kotlinx.serialization.Serializable
+import me.yeahapps.mypetai.R
 import me.yeahapps.mypetai.core.ui.component.topbar.PetAISecondaryTopAppBar
 import me.yeahapps.mypetai.core.ui.theme.PetAITheme
 import me.yeahapps.mypetai.core.ui.utils.collectFlowWithLifecycle
@@ -50,9 +54,6 @@ import me.yeahapps.mypetai.feature.discover.ui.component.SongCard
 import me.yeahapps.mypetai.feature.discover.ui.event.DiscoverEvent
 import me.yeahapps.mypetai.feature.discover.ui.state.DiscoverState
 import me.yeahapps.mypetai.feature.discover.ui.viewmodel.DiscoverViewModel
-import kotlinx.coroutines.delay
-import kotlinx.serialization.Serializable
-import me.yeahapps.mypetai.R
 
 @Serializable
 object DiscoverScreen
@@ -92,8 +93,9 @@ fun DiscoverContainer(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun DiscoverContent(
-    modifier: Modifier = Modifier, state: DiscoverState = DiscoverState(), onEvent: (DiscoverEvent) -> Unit = {}
+    modifier: Modifier = Modifier, state: DiscoverState = DiscoverState(), onEvent: (DiscoverEvent) -> Unit = {},
 ) {
+    val activity = LocalActivity.current
     var isButtonExpanded by remember { mutableStateOf(true) }
     val hazeState = rememberHazeState(true)
     val listState = rememberLazyListState()
@@ -115,10 +117,10 @@ private fun DiscoverContent(
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
 
-    Box {
+    Box(modifier = modifier.fillMaxSize()) {
         LazyColumn(
             state = listState,
-            modifier = modifier.fillMaxSize().navigationBarsPadding(),
+            modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             item {
@@ -176,6 +178,7 @@ private fun DiscoverContent(
                     }
                 }
             }
+
             items(state.songCategories, key = { it.id }) { category ->
                 val filteredSongs = state.songs.filter { it.songCategories.contains(category.name) }
                 if (filteredSongs.isEmpty()) return@items
@@ -198,6 +201,7 @@ private fun DiscoverContent(
             Button(
                 onClick = {
                     if (isButtonExpanded) {
+                        activity?.let { onEvent(DiscoverEvent.StartSubscription(it)) }
                     } else {
                         isButtonExpanded = true
                     }
@@ -210,7 +214,7 @@ private fun DiscoverContent(
                     disabledContainerColor = Color.White,
                     disabledContentColor = Color.Black
                 ),
-                modifier = Modifier.wrapContentSize()
+                modifier = Modifier.wrapContentSize().statusBarsPadding()
             ) {
                 Row(
                     modifier = Modifier.animateContentSize(tween(300)),
@@ -233,7 +237,7 @@ private fun DiscoverContent(
         FloatingActionButton(
             onClick = {},
             shape = CircleShape,
-            modifier = Modifier.padding(bottom = 72.dp).align(Alignment.BottomCenter).padding(16.dp),
+            modifier = Modifier.padding(bottom = 24.dp).align(Alignment.BottomCenter).padding(16.dp),
             contentColor = PetAITheme.colors.buttonTextPrimary,
             containerColor = PetAITheme.colors.buttonPrimaryDefault
         ) {

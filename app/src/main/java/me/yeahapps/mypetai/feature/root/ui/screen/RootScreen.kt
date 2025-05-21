@@ -1,5 +1,6 @@
 package me.yeahapps.mypetai.feature.root.ui.screen
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -13,15 +14,15 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
+import kotlinx.serialization.Serializable
 import me.yeahapps.mypetai.core.ui.navigation.commonModifier
 import me.yeahapps.mypetai.feature.create.ui.screen.CreateContainer
 import me.yeahapps.mypetai.feature.discover.ui.screen.DiscoverContainer
 import me.yeahapps.mypetai.feature.discover.ui.screen.SongInfoScreen
 import me.yeahapps.mypetai.feature.profile.ui.screen.MyWorksScreen
 import me.yeahapps.mypetai.feature.profile.ui.screen.ProfileContainer
-import me.yeahapps.mypetai.feature.root.ui.component.PetAIBottomNavigation
-import kotlinx.serialization.Serializable
 import me.yeahapps.mypetai.feature.root.ui.BottomNavigationItem
+import me.yeahapps.mypetai.feature.root.ui.component.PetAIBottomNavigation
 
 @Serializable
 object RootScreen
@@ -54,12 +55,14 @@ private fun RootContent(modifier: Modifier = Modifier, parentNavController: NavH
         NavHost(
             navController,
             startDestination = BottomNavigationItem.Discover.route,
-            modifier = Modifier.fillMaxSize().padding(top = innerPadding.calculateTopPadding())
+            modifier = Modifier.fillMaxSize()
         ) {
             composable(BottomNavigationItem.Discover.route) {
-                DiscoverContainer(modifier = Modifier.commonModifier(), navigateToSongInfo = {
-                    parentNavController.navigate(SongInfoScreen(it))
-                })
+                DiscoverContainer(
+                    modifier = Modifier.commonModifier().padding(bottom = innerPadding.calculateBottomPadding()),
+                    navigateToSongInfo = {
+                        parentNavController.navigate(SongInfoScreen(it))
+                    })
             }
             composable(BottomNavigationItem.Create.route) {
                 CreateContainer(modifier = Modifier.commonModifier())

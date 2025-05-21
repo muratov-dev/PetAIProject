@@ -30,6 +30,12 @@ room = "2.7.1"
 media3 = "1.7.1"
 media = "1.7.0"
 
+googleServices = "4.4.2"
+firebaseBom = "33.14.0"
+crashlytics = "3.0.3"
+
+billing = "6.2.1"
+
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -73,12 +79,19 @@ media3-ui = { module = "androidx.media3:media3-ui", version.ref = "media3" }
 media3-session = { module = "androidx.media3:media3-session", version.ref = "media3" }
 media = { module = "androidx.media:media", version.ref = "media" }
 
+firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
+firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
+firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
+
+billing-ktx = {module = "com.android.billingclient:billing-ktx", version.ref = "billing"}
+
 [bundles]
 androidx-ui = ["androidx-ui", "androidx-ui-graphics", "androidx-ui-tooling-preview"]
 okhttp = ["okhttp", "okhttp-logging"]
 retrofit = ["retrofit", "retrofit-kotlinx-serialization"]
 room = ["room-runtime", "room-ktx"]
 media3 = ["media3-exoplayer", "media3-ui", "media3-session"]
+firebase = ["firebase-analytics", "firebase-crashlytics"]
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -87,4 +100,6 @@ kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "ko
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 devtools-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+google-services = { id = "com.google.gms.google-services", version.ref = "googleServices"}
+crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "crashlytics" }
 
