@@ -31,7 +31,7 @@
 
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="dev.ymuratov.petai.provider"
+            android:authorities="me.yeahapps.mypetai.provider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data

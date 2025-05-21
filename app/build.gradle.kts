@@ -8,11 +8,11 @@ plugins {
 }
 
 android {
-    namespace = "dev.ymuratov.petai"
+    namespace = "me.yeahapps.mypetai"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "dev.ymuratov.petai"
+        applicationId = "me.yeahapps.mypetai"
         minSdk = 26
         targetSdk = 35
         versionCode = 1
