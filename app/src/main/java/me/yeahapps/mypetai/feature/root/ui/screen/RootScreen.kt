@@ -1,6 +1,5 @@
 package me.yeahapps.mypetai.feature.root.ui.screen
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -16,6 +15,7 @@ import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.serialization.Serializable
 import me.yeahapps.mypetai.core.ui.navigation.commonModifier
+import me.yeahapps.mypetai.feature.create.ui.screen.AudioRecordScreen
 import me.yeahapps.mypetai.feature.create.ui.screen.CreateContainer
 import me.yeahapps.mypetai.feature.discover.ui.screen.DiscoverContainer
 import me.yeahapps.mypetai.feature.discover.ui.screen.SongInfoScreen
@@ -53,19 +53,22 @@ private fun RootContent(modifier: Modifier = Modifier, parentNavController: NavH
             })
     }) { innerPadding ->
         NavHost(
-            navController,
-            startDestination = BottomNavigationItem.Discover.route,
-            modifier = Modifier.fillMaxSize()
+            navController, startDestination = BottomNavigationItem.Discover.route, modifier = Modifier.fillMaxSize()
         ) {
             composable(BottomNavigationItem.Discover.route) {
                 DiscoverContainer(
-                    modifier = Modifier.commonModifier().padding(bottom = innerPadding.calculateBottomPadding()),
+                    modifier = Modifier
+                        .commonModifier()
+                        .padding(bottom = innerPadding.calculateBottomPadding()),
+                    navigateToCreate = { navController.navigate(BottomNavigationItem.Create.route) },
                     navigateToSongInfo = {
                         parentNavController.navigate(SongInfoScreen(it))
                     })
             }
             composable(BottomNavigationItem.Create.route) {
-                CreateContainer(modifier = Modifier.commonModifier())
+                CreateContainer(modifier = Modifier.commonModifier(), navigateToRecord = {
+                    parentNavController.navigate(AudioRecordScreen)
+                })
             }
             composable(BottomNavigationItem.Profile.route) {
                 ProfileContainer(modifier = Modifier.commonModifier(), navigateToMyWorks = {

@@ -9,5 +9,5 @@ import me.yeahapps.mypetai.feature.root.ui.screen.RootScreen
 
 @Composable
 fun PetAIApp(navController: NavHostController) {
-    PetAINavHost(navController = navController, startDestination = RootScreen)
+    PetAINavHost(navController = navController, startDestination = OnboardingScreen)
 }

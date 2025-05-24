@@ -1,19 +1,11 @@
 package me.yeahapps.mypetai.feature.discover.ui.viewmodel
 
-import android.app.Activity
-import android.content.Context
-import com.android.billingclient.api.BillingClient
-import com.android.billingclient.api.Purchase
-import com.android.billingclient.api.PurchasesUpdatedListener
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
-import me.yeahapps.mypetai.core.data.billing.BillingManager
 import me.yeahapps.mypetai.core.ui.viewmodel.BaseViewModel
 import me.yeahapps.mypetai.feature.discover.domain.model.SongCategoryModel
 import me.yeahapps.mypetai.feature.discover.domain.model.SongModel
 import me.yeahapps.mypetai.feature.discover.domain.repository.DiscoverRepository
 import me.yeahapps.mypetai.feature.discover.ui.action.DiscoverAction
-import me.yeahapps.mypetai.feature.discover.ui.action.DiscoverAction.NavigateToSongInfo
 import me.yeahapps.mypetai.feature.discover.ui.event.DiscoverEvent
 import me.yeahapps.mypetai.feature.discover.ui.state.DiscoverState
 import timber.log.Timber
@@ -29,9 +21,10 @@ class DiscoverViewModel @Inject constructor(
             is DiscoverEvent.SelectCategory -> updateViewState { copy(selectedCategory = viewEvent.category) }
             DiscoverEvent.InitState -> initState()
 
-            is DiscoverEvent.NavigateToSongInfo -> sendAction(NavigateToSongInfo(viewEvent.song))
+            is DiscoverEvent.NavigateToSongInfo -> sendAction(DiscoverAction.NavigateToSongInfo(viewEvent.song))
 
             is DiscoverEvent.StartSubscription -> {}
+            DiscoverEvent.NavigateToCreate -> sendAction(DiscoverAction.NavigateToCreate)
         }
     }
 

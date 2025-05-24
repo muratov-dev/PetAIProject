@@ -21,7 +21,7 @@ object ProfileScreen
 
 @Composable
 fun ProfileContainer(modifier: Modifier = Modifier, navigateToMyWorks: () -> Unit) {
-    ProfileContent(modifier = modifier, navigateToMyWorks = navigateToMyWorks)
+    ProfileContent(modifier = modifier.systemBarsPadding(), navigateToMyWorks = navigateToMyWorks)
 }
 
 @Composable

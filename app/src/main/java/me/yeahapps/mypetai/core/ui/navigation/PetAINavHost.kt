@@ -1,11 +1,12 @@
 package me.yeahapps.mypetai.core.ui.navigation
 
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import me.yeahapps.mypetai.feature.create.ui.screen.AudioRecordContainer
+import me.yeahapps.mypetai.feature.create.ui.screen.AudioRecordScreen
 import me.yeahapps.mypetai.feature.discover.domain.model.DiscoverNavType
 import me.yeahapps.mypetai.feature.discover.domain.model.SongModel
 import me.yeahapps.mypetai.feature.discover.ui.screen.SongInfoContainer
@@ -26,7 +27,7 @@ fun PetAINavHost(startDestination: Any, navController: NavHostController, modifi
         composable<OnboardingScreen> {
             OnboardingContainer(
                 modifier = Modifier.commonModifier(), navigateToSubsOnboarding = {
-                    navController.navigate(OnboardingSubscriptionScreen)
+                    navController.navigate(RootScreen)
                 })
         }
         composable<OnboardingSubscriptionScreen> {
@@ -34,6 +35,10 @@ fun PetAINavHost(startDestination: Any, navController: NavHostController, modifi
         }
         composable<RootScreen> {
             RootContainer(modifier = Modifier.commonModifier(), parentNavController = navController)
+        }
+
+        composable<AudioRecordScreen> {
+            AudioRecordContainer(modifier = Modifier.commonModifier(), navigateUp = { navController.navigateUp() })
         }
         composable<SongInfoScreen>(typeMap = mapOf(typeOf<SongModel>() to DiscoverNavType.SongType)) {
             SongInfoContainer(modifier = Modifier.commonModifier(), navigateUp = {

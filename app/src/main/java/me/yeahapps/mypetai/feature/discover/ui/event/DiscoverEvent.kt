@@ -12,4 +12,5 @@ sealed interface DiscoverEvent {
     data class StartSubscription(val activity: Activity): DiscoverEvent
 
     data class NavigateToSongInfo(val song: SongModel) : DiscoverEvent
+    data object NavigateToCreate : DiscoverEvent
 }
