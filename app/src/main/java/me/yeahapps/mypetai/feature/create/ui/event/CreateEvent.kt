@@ -13,4 +13,6 @@ sealed interface CreateEvent {
 
     data object PlayAudio : CreateEvent
     data object PauseAudio : CreateEvent
+
+    data object StartCreatingVideo: CreateEvent
 }

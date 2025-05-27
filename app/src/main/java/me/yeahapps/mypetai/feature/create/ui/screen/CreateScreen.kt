@@ -59,7 +59,6 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.FileProvider
 import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
@@ -78,6 +77,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 import me.yeahapps.mypetai.R
 import me.yeahapps.mypetai.core.ui.component.button.filled.PetAIButtonDefaults
+import me.yeahapps.mypetai.core.ui.component.button.filled.PetAIPrimaryButton
 import me.yeahapps.mypetai.core.ui.component.button.filled.PetAISecondaryButton
 import me.yeahapps.mypetai.core.ui.component.button.icon.PetAIIconButton
 import me.yeahapps.mypetai.core.ui.component.button.icon.PetAIIconButtonDefaults
@@ -99,7 +99,10 @@ object CreateScreen
 
 @Composable
 fun CreateContainer(
-    modifier: Modifier = Modifier, viewModel: CreateViewModel = hiltViewModel(), navigateToRecord: () -> Unit
+    modifier: Modifier = Modifier,
+    viewModel: CreateViewModel = hiltViewModel(),
+    navigateToProcessing: (String, String) -> Unit,
+    navigateToRecord: () -> Unit
 ) {
     val context = LocalContext.current
     val exoPlayer = remember {
@@ -116,6 +119,7 @@ fun CreateContainer(
             CreateAction.PauseAudio -> exoPlayer.pause()
             CreateAction.PlayAudio -> exoPlayer.play()
             CreateAction.RecordAudio -> navigateToRecord()
+            is CreateAction.StartCreatingVideo -> navigateToProcessing(action.imageUri, action.audioUri)
             null -> {}
         }
     }
@@ -382,7 +386,15 @@ private fun CreateContent(
                 )
             }
         }
+        Spacer(Modifier.size(60.dp))
+        PetAIPrimaryButton(
+            centerContent = "Create",
+            enabled = state.isButtonEnabled,
+            onClick = { onEvent(CreateEvent.StartCreatingVideo) },
+            modifier = Modifier.fillMaxWidth()
+        )
     }
+
 
     if (avatarSourceSelectionVisible) {
         ModalBottomSheet(

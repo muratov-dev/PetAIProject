@@ -80,6 +80,7 @@ media = { module = "androidx.media:media", version.ref = "media" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
+firebase-database = { module = "com.google.firebase:firebase-database-ktx" }
 
 [bundles]
 androidx-ui = ["androidx-ui", "androidx-ui-graphics", "androidx-ui-tooling-preview"]
@@ -87,7 +88,7 @@ okhttp = ["okhttp", "okhttp-logging"]
 retrofit = ["retrofit", "retrofit-kotlinx-serialization"]
 room = ["room-runtime", "room-ktx"]
 media3 = ["media3-exoplayer", "media3-ui", "media3-session"]
-firebase = ["firebase-analytics", "firebase-crashlytics"]
+firebase = ["firebase-analytics", "firebase-crashlytics", "firebase-database"]
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

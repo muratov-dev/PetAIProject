@@ -17,6 +17,7 @@ import kotlinx.serialization.Serializable
 import me.yeahapps.mypetai.core.ui.navigation.commonModifier
 import me.yeahapps.mypetai.feature.create.ui.screen.AudioRecordScreen
 import me.yeahapps.mypetai.feature.create.ui.screen.CreateContainer
+import me.yeahapps.mypetai.feature.create.ui.screen.VideoProcessingScreen
 import me.yeahapps.mypetai.feature.discover.ui.screen.DiscoverContainer
 import me.yeahapps.mypetai.feature.discover.ui.screen.SongInfoScreen
 import me.yeahapps.mypetai.feature.profile.ui.screen.MyWorksScreen
@@ -66,9 +67,9 @@ private fun RootContent(modifier: Modifier = Modifier, parentNavController: NavH
                     })
             }
             composable(BottomNavigationItem.Create.route) {
-                CreateContainer(modifier = Modifier.commonModifier(), navigateToRecord = {
-                    parentNavController.navigate(AudioRecordScreen)
-                })
+                CreateContainer(modifier = Modifier.commonModifier(), navigateToProcessing = { imageUri, audioUri ->
+                    parentNavController.navigate(VideoProcessingScreen(imageUri, audioUri))
+                }, navigateToRecord = { parentNavController.navigate(AudioRecordScreen) })
             }
             composable(BottomNavigationItem.Profile.route) {
                 ProfileContainer(modifier = Modifier.commonModifier(), navigateToMyWorks = {

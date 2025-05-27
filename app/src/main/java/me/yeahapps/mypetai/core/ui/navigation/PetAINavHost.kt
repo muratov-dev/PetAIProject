@@ -7,6 +7,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import me.yeahapps.mypetai.feature.create.ui.screen.AudioRecordContainer
 import me.yeahapps.mypetai.feature.create.ui.screen.AudioRecordScreen
+import me.yeahapps.mypetai.feature.create.ui.screen.VideoProcessingScreen
+import me.yeahapps.mypetai.feature.create.ui.screen.VideoProcessingScreenContainer
 import me.yeahapps.mypetai.feature.discover.domain.model.DiscoverNavType
 import me.yeahapps.mypetai.feature.discover.domain.model.SongModel
 import me.yeahapps.mypetai.feature.discover.ui.screen.SongInfoContainer
@@ -39,6 +41,9 @@ fun PetAINavHost(startDestination: Any, navController: NavHostController, modifi
 
         composable<AudioRecordScreen> {
             AudioRecordContainer(modifier = Modifier.commonModifier(), navigateUp = { navController.navigateUp() })
+        }
+        composable<VideoProcessingScreen> {
+            VideoProcessingScreenContainer(modifier = Modifier.commonModifier())
         }
         composable<SongInfoScreen>(typeMap = mapOf(typeOf<SongModel>() to DiscoverNavType.SongType)) {
             SongInfoContainer(modifier = Modifier.commonModifier(), navigateUp = {

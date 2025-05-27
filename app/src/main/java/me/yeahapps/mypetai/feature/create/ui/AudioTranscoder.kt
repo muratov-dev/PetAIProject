@@ -2,6 +2,7 @@ package me.yeahapps.mypetai.feature.create.ui
 
 import android.media.*
 
+@Suppress("DEPRECATION")
 class AudioTranscoder(
     private val inputPath: String,
     private val outputPath: String,
