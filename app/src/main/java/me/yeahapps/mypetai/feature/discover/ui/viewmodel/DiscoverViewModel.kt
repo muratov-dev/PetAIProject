@@ -29,18 +29,7 @@ class DiscoverViewModel @Inject constructor(
     }
 
     private fun initState() = viewModelScoped {
-        val songs = discoverRepository.getSongs().flatMap { song ->
-            song.videos.mapIndexed { idx, video ->
-                SongModel(
-                    id = song.id * 1000 + idx,
-                    name = song.name,
-                    videos = listOf(video),
-                    path = song.path,
-                    songCategories = song.songCategories,
-                    url = song.url
-                )
-            }
-        }
+        val songs = discoverRepository.getSongs()
 
         val categories = discoverRepository.getSongCategories()
         val bottomSheetCategories = songs.flatMap { it.songCategories }.distinct()

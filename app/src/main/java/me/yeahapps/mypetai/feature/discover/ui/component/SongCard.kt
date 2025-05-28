@@ -28,7 +28,7 @@ fun SongCard(modifier: Modifier = Modifier, song: SongModel, onSongClick: (SongM
         modifier = modifier.size(width = 168.dp, height = 208.dp).clickable(onClick = { onSongClick(song) })
             .clip(RoundedCornerShape(32.dp))
     ) {
-        PetAIAsyncImage(modifier = Modifier.matchParentSize(), data = song.videos.first().imageUrl)
+        PetAIAsyncImage(modifier = Modifier.matchParentSize(), data = song.video.imageUrl)
         Canvas(modifier = Modifier.fillMaxWidth().fillMaxHeight(0.5f).align(Alignment.BottomCenter), onDraw = {
             drawRect(Brush.verticalGradient(listOf(Color.Transparent, Color(0xCC040401))))
         })

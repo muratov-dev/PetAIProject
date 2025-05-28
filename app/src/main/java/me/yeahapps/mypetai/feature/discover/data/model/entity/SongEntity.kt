@@ -10,9 +10,9 @@ data class SongEntity(
     @PrimaryKey val id: Int,
     val name: String,
     val path: String,
-    val songCategories: List<String>,
     val url: String,
-    val videos: List<VideoEntity>
+    val songCategories: List<String>,
+    val video: VideoEntity
 )
 
-fun SongEntity.toDomain() = SongModel(id, name, path, songCategories, url, videos.map { it.toDomain() })
+fun SongEntity.toDomain() = SongModel(id, name, path, songCategories, url, video.toDomain())

@@ -1,10 +1,10 @@
 package me.yeahapps.mypetai.feature.discover.data.model.dto
 
 
-import me.yeahapps.mypetai.feature.discover.data.model.entity.ImageEntity
-import me.yeahapps.mypetai.feature.discover.data.model.entity.SongEntity
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import me.yeahapps.mypetai.feature.discover.data.model.entity.SongEntity
+import me.yeahapps.mypetai.feature.discover.data.model.entity.VideoEntity
 
 @Serializable
 data class SongDto(
@@ -15,10 +15,6 @@ data class SongDto(
     val videos: List<VideoDto>
 )
 
-fun SongDto.toEntity(songId: Int, images: List<ImageEntity>) = SongEntity(
-    id = songId,
-    name = name,
-    path = path,
-    songCategories = songCategories,
-    url = url,
-    videos = videos.map { it.toEntity(images) })
+fun SongDto.toEntity(id: Int, video: VideoEntity) = SongEntity(
+    id = id, name = name, path = path, songCategories = songCategories, url = url, video = video
+)

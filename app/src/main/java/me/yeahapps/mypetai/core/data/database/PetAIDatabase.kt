@@ -13,7 +13,7 @@ import me.yeahapps.mypetai.feature.profile.data.local.MyWorksDao
 import me.yeahapps.mypetai.feature.profile.data.model.MyWorkEntity
 
 @Database(
-    entities = [SongCategoryEntity::class, SongEntity::class, MyWorkEntity::class], version = 2, exportSchema = false
+    entities = [SongCategoryEntity::class, SongEntity::class, MyWorkEntity::class], version = 3, exportSchema = false
 )
 @TypeConverters(
     IntListTypeConverter::class,

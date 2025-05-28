@@ -9,5 +9,5 @@ data class SongModel(
     val path: String,
     val songCategories: List<String>,
     val url: String,
-    val videos: List<VideoModel>
+    val video: VideoModel
 )

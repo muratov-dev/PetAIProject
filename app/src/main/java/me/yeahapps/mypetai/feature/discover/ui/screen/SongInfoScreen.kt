@@ -95,7 +95,7 @@ fun SongInfoContainer(
     val exoPlayer = remember {
         ExoPlayer.Builder(context).build().apply {
             state.songInfo?.let {
-                setMediaItem(MediaItem.fromUri(it.videos.first().video))
+                it.video.videoPath?.let { uri -> setMediaItem(MediaItem.fromUri(uri)) }
             }
             repeatMode = ExoPlayer.REPEAT_MODE_ALL
             playWhenReady = true
