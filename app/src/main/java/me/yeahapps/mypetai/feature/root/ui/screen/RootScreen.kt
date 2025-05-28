@@ -68,7 +68,7 @@ private fun RootContent(modifier: Modifier = Modifier, parentNavController: NavH
             }
             composable(BottomNavigationItem.Create.route) {
                 CreateContainer(modifier = Modifier.commonModifier(), navigateToProcessing = { imageUri, audioUri ->
-                    parentNavController.navigate(VideoProcessingScreen(imageUri, audioUri))
+                    parentNavController.navigate(VideoProcessingScreen(imageUri = imageUri, audioUri = audioUri))
                 }, navigateToRecord = { parentNavController.navigate(AudioRecordScreen) })
             }
             composable(BottomNavigationItem.Profile.route) {

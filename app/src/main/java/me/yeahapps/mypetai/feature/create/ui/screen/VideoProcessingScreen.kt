@@ -1,68 +1,160 @@
 package me.yeahapps.mypetai.feature.create.ui.screen
 
-import android.content.Context
-import android.content.Intent
+import android.widget.Toast
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.Scaffold
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalContext
-import androidx.core.content.FileProvider
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.serialization.Serializable
+import me.yeahapps.mypetai.R
+import me.yeahapps.mypetai.core.ui.theme.PetAITheme
+import me.yeahapps.mypetai.core.ui.utils.collectFlowWithLifecycle
+import me.yeahapps.mypetai.feature.create.ui.action.VideoProcessingAction
+import me.yeahapps.mypetai.feature.create.ui.event.VideoProcessingEvent
 import me.yeahapps.mypetai.feature.create.ui.state.VideoProcessingState
 import me.yeahapps.mypetai.feature.create.ui.viewmodel.VideoProcessingViewModel
-import java.io.File
+import kotlin.math.roundToInt
 
 @Serializable
-data class VideoProcessingScreen(
-    val imageUri: String, val audioUri: String
-)
+data class VideoProcessingScreen(val songName: String = "", val imageUri: String, val audioUri: String)
 
 @Composable
 fun VideoProcessingScreenContainer(
-    modifier: Modifier = Modifier, viewModel: VideoProcessingViewModel = hiltViewModel()
+    modifier: Modifier = Modifier,
+    viewModel: VideoProcessingViewModel = hiltViewModel(),
+    navigateUp: () -> Unit,
+    navigateToVideo: (String) -> Unit
 ) {
+    val context = LocalContext.current
     val state by viewModel.viewState.collectAsStateWithLifecycle()
-    VideoProcessingScreenContent(modifier = modifier, state = state)
+    viewModel.viewActions.collectFlowWithLifecycle(viewModel) { action ->
+        when (action) {
+            is VideoProcessingAction.ShowVideoGeneratingError -> {
+                navigateUp()
+                Toast.makeText(context, "UnknownError", Toast.LENGTH_SHORT).show()
+            }
+
+            is VideoProcessingAction.NavigateToVideo -> navigateToVideo(action.videoPath)
+            null -> {}
+        }
+    }
+    VideoProcessingScreenContent(
+        modifier = modifier.systemBarsPadding(),
+        state = state,
+        onEvent = remember { { event -> viewModel.obtainEvent(event) } })
 }
 
 @Composable
 private fun VideoProcessingScreenContent(
-    modifier: Modifier = Modifier, state: VideoProcessingState = VideoProcessingState()
+    modifier: Modifier = Modifier,
+    state: VideoProcessingState = VideoProcessingState(),
+    onEvent: (VideoProcessingEvent) -> Unit = {}
 ) {
-    val context = LocalContext.current
-
-    Scaffold(modifier = modifier) { innerPadding ->
-        Column(modifier = Modifier.padding(innerPadding)) {
-            Text(text = state.videoPath.toString())
-            Button(onClick = {
-                val file = state.videoPath?.let { File(state.videoPath) }
-                if (file != null && file.exists()) {
-                    shareFile(context, file, "video/mp4")
-                }
-            }) { }
+    LaunchedEffect(state.progress) {
+        if (state.progress == 1f) {
+            state.videoPath?.let {
+                onEvent(VideoProcessingEvent.NavigateToVideo(songName = state.songName, videoPath = it))
+            }
         }
+    }
+
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Image(
+            painter = painterResource(R.drawable.im_loading),
+            contentDescription = null,
+            modifier = Modifier.size(136.dp)
+        )
+        Spacer(Modifier.size(16.dp))
+        LoaderSlider(
+            state.progress, modifier = Modifier
+                .padding(horizontal = 60.dp)
+                .fillMaxWidth()
+        )
+        Spacer(Modifier.size(16.dp))
+        Text(
+            text = "${(state.progress * 100).roundToInt()}%",
+            color = PetAITheme.colors.textPrimary,
+            style = PetAITheme.typography.textRegular.copy(fontWeight = FontWeight.Medium)
+        )
+        Spacer(Modifier.size(16.dp))
+        Text(
+            text = "hold on, wait a minute",
+            color = PetAITheme.colors.textPrimary,
+            style = PetAITheme.typography.textRegular.copy(fontWeight = FontWeight.Medium)
+        )
     }
 }
 
-fun shareFile(context: Context, file: File, mimeType: String) {
-    val uri = FileProvider.getUriForFile(
-        context, "${context.packageName}.provider", file
-    )
+@Composable
+fun LoaderSlider(
+    progress: Float,
+    modifier: Modifier = Modifier,
+    trackColor: Color = Color.Gray,
+    trackHeight: Dp = 6.dp,
+) {
+    var sliderWidth by remember { mutableFloatStateOf(0f) }
+    var tempProgress by remember { mutableFloatStateOf(progress) }
+    var isDragging by remember { mutableStateOf(false) }
 
-    val shareIntent = Intent(Intent.ACTION_SEND).apply {
-        type = mimeType
-        putExtra(Intent.EXTRA_STREAM, uri)
-        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+    val animatedProgress by animateFloatAsState(targetValue = tempProgress, label = "")
+    val trackHeightPx = with(LocalDensity.current) { trackHeight.toPx() }
+
+    Box(modifier = modifier.height(6.dp)) {
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            sliderWidth = size.width
+
+            drawLine(
+                color = trackColor,
+                start = Offset(0f, size.height / 2),
+                end = Offset(size.width, size.height / 2),
+                strokeWidth = trackHeightPx,
+                cap = StrokeCap.Round
+            )
+
+            drawLine(
+                color = Color(0xFFC3F960),
+                start = Offset(0f, size.height / 2),
+                end = Offset(size.width * animatedProgress, size.height / 2),
+                strokeWidth = trackHeightPx,
+                cap = StrokeCap.Round
+            )
+        }
     }
-
-    context.startActivity(
-        Intent.createChooser(shareIntent, "Поделиться через:")
-    )
+    LaunchedEffect(progress) {
+        if (!isDragging) tempProgress = progress
+    }
 }

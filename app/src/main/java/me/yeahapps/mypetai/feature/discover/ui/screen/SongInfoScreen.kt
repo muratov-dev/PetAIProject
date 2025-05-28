@@ -11,10 +11,31 @@ import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia
 import androidx.annotation.OptIn
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -40,6 +61,8 @@ import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
+import kotlinx.serialization.Serializable
+import me.yeahapps.mypetai.R
 import me.yeahapps.mypetai.core.ui.component.button.filled.PetAIButtonDefaults
 import me.yeahapps.mypetai.core.ui.component.button.filled.PetAIPrimaryButton
 import me.yeahapps.mypetai.core.ui.component.button.filled.PetAISecondaryButton
@@ -53,17 +76,18 @@ import me.yeahapps.mypetai.feature.discover.domain.model.SongModel
 import me.yeahapps.mypetai.feature.discover.ui.event.SongInfoEvent
 import me.yeahapps.mypetai.feature.discover.ui.state.SongInfoState
 import me.yeahapps.mypetai.feature.discover.ui.viewmodel.SongInfoViewModel
-import kotlinx.serialization.Serializable
 import timber.log.Timber
 import java.io.File
-import me.yeahapps.mypetai.R
 
 @Serializable
 data class SongInfoScreen(val song: SongModel)
 
 @Composable
 fun SongInfoContainer(
-    modifier: Modifier = Modifier, viewModel: SongInfoViewModel = hiltViewModel(), navigateUp: () -> Unit = {}
+    modifier: Modifier = Modifier,
+    viewModel: SongInfoViewModel = hiltViewModel(),
+    navigateUp: () -> Unit = {},
+    navigateToProcessing: (String, String, String) -> Unit
 ) {
     val state by viewModel.viewState.collectAsStateWithLifecycle()
 
@@ -160,7 +184,10 @@ private fun SongInfoContent(
     }) { innerPadding ->
         Column(modifier = Modifier.padding(top = innerPadding.calculateTopPadding(), start = 16.dp, end = 16.dp)) {
             Box(
-                modifier = Modifier.fillMaxWidth().aspectRatio(1f / 1.39f, true).clip(RoundedCornerShape(32.dp))
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(1f / 1.39f, true)
+                    .clip(RoundedCornerShape(32.dp))
             ) {
                 AndroidView(modifier = Modifier.matchParentSize(), factory = { context ->
                     PlayerView(context).apply {
@@ -184,7 +211,10 @@ private fun SongInfoContent(
                             exoPlayer.volume = 0f
                         }
                     },
-                    modifier = Modifier.padding(16.dp).size(40.dp).align(Alignment.TopEnd)
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .size(40.dp)
+                        .align(Alignment.TopEnd)
                 )
             }
             Spacer(Modifier.size(16.dp))
@@ -198,7 +228,9 @@ private fun SongInfoContent(
                         painter = painter,
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
-                        modifier = Modifier.size(48.dp).clip(RoundedCornerShape(4.dp))
+                        modifier = Modifier
+                            .size(48.dp)
+                            .clip(RoundedCornerShape(4.dp))
                     )
                 } else {
                     Icon(
@@ -224,7 +256,10 @@ private fun SongInfoContent(
             onDismissRequest = { avatarSourceSelectionVisible = false }, sheetState = sheetState,
             dragHandle = {
                 Canvas(
-                    Modifier.padding(top = 8.dp, bottom = 8.dp).width(36.dp).height(5.dp)
+                    Modifier
+                        .padding(top = 8.dp, bottom = 8.dp)
+                        .width(36.dp)
+                        .height(5.dp)
                         .clip(RoundedCornerShape(100.dp))
                 ) {
                     drawRect(color = Color(0x667F7F7F))
@@ -234,7 +269,11 @@ private fun SongInfoContent(
             containerColor = Color(0xFF221F03),
         ) {
             Column {
-                Row(modifier = Modifier.padding(horizontal = 16.dp).fillMaxWidth()) {
+                Row(
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        .fillMaxWidth()
+                ) {
                     Text(
                         text = "Upload from",
                         style = PetAITheme.typography.buttonTextDefault,
@@ -257,7 +296,9 @@ private fun SongInfoContent(
                         Icon(imageVector = ImageVector.vectorResource(R.drawable.ic_gallery), contentDescription = null)
                     },
                     onClick = { pickMedia.launch(PickVisualMediaRequest(ImageOnly)) },
-                    modifier = Modifier.padding(horizontal = 16.dp).fillMaxWidth()
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        .fillMaxWidth()
                 )
                 Spacer(Modifier.size(16.dp))
                 PetAISecondaryButton(
@@ -270,7 +311,9 @@ private fun SongInfoContent(
                         contentColor = PetAITheme.colors.buttonTextSecondary,
                     ),
                     onClick = { cameraPermissionLauncher.launch(Manifest.permission.CAMERA) },
-                    modifier = Modifier.padding(horizontal = 16.dp).fillMaxWidth()
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        .fillMaxWidth()
                 )
                 Spacer(Modifier.size(32.dp))
             }

@@ -7,6 +7,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import me.yeahapps.mypetai.feature.create.ui.screen.AudioRecordContainer
 import me.yeahapps.mypetai.feature.create.ui.screen.AudioRecordScreen
+import me.yeahapps.mypetai.feature.create.ui.screen.GeneratedVideoContainer
+import me.yeahapps.mypetai.feature.create.ui.screen.GeneratedVideoScreen
 import me.yeahapps.mypetai.feature.create.ui.screen.VideoProcessingScreen
 import me.yeahapps.mypetai.feature.create.ui.screen.VideoProcessingScreenContainer
 import me.yeahapps.mypetai.feature.discover.domain.model.DiscoverNavType
@@ -43,12 +45,21 @@ fun PetAINavHost(startDestination: Any, navController: NavHostController, modifi
             AudioRecordContainer(modifier = Modifier.commonModifier(), navigateUp = { navController.navigateUp() })
         }
         composable<VideoProcessingScreen> {
-            VideoProcessingScreenContainer(modifier = Modifier.commonModifier())
+            VideoProcessingScreenContainer(modifier = Modifier.commonModifier(), navigateUp = {
+                navController.navigateUp()
+            }, navigateToVideo = {
+                navController.popBackStack()
+                navController.navigate(GeneratedVideoScreen(videoPath = it))
+            })
+        }
+        composable<GeneratedVideoScreen> {
+            GeneratedVideoContainer(modifier = Modifier.commonModifier(), navigateUp = { navController.navigateUp() })
         }
         composable<SongInfoScreen>(typeMap = mapOf(typeOf<SongModel>() to DiscoverNavType.SongType)) {
-            SongInfoContainer(modifier = Modifier.commonModifier(), navigateUp = {
-                navController.navigateUp()
-            })
+            SongInfoContainer(
+                modifier = Modifier.commonModifier(),
+                navigateUp = { navController.navigateUp() },
+                navigateToProcessing = { _, _, _ -> })
         }
         composable<MyWorksScreen> {
             MyWorksContainer(modifier = Modifier.commonModifier())
