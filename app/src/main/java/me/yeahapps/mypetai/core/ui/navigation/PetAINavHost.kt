@@ -59,7 +59,13 @@ fun PetAINavHost(startDestination: Any, navController: NavHostController, modifi
             SongInfoContainer(
                 modifier = Modifier.commonModifier(),
                 navigateUp = { navController.navigateUp() },
-                navigateToProcessing = { _, _, _ -> })
+                navigateToProcessing = { songName, imageUri, audioUri ->
+                    navController.navigate(VideoProcessingScreen(
+                        songName = songName,
+                        imageUri = imageUri,
+                        audioUri = audioUri
+                    ))
+                })
         }
         composable<MyWorksScreen> {
             MyWorksContainer(modifier = Modifier.commonModifier())

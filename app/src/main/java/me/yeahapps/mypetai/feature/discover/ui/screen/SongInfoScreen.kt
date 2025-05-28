@@ -125,6 +125,7 @@ fun SongInfoContainer(
         exoPlayer = exoPlayer,
         state = state,
         onEvent = remember { { event -> viewModel.obtainEvent(event) } },
+        navigateToProcessing = navigateToProcessing,
         navigateUp = navigateUp
     )
 }
@@ -137,6 +138,7 @@ private fun SongInfoContent(
     exoPlayer: ExoPlayer,
     state: SongInfoState = SongInfoState(),
     onEvent: (SongInfoEvent) -> Unit = {},
+    navigateToProcessing: (String, String, String) -> Unit,
     navigateUp: () -> Unit
 ) {
     val context = LocalContext.current
@@ -244,7 +246,7 @@ private fun SongInfoContent(
                 centerContent = "Generate",
                 enabled = uria != null,
                 colors = PetAIButtonDefaults.colors(contentColor = PetAITheme.colors.buttonTextPrimary),
-                onClick = {},
+                onClick = { state.songInfo?.let { navigateToProcessing(it.name, uria.toString(), it.url) } },
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(Modifier.size(24.dp))

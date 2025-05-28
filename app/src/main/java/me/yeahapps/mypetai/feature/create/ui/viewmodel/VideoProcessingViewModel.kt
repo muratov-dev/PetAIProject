@@ -35,7 +35,11 @@ class VideoProcessingViewModel @Inject constructor(
     private fun startCreatingVideo() = viewModelScoped {
         val imageUrl = createRepository.uploadImage(args.imageUri.toUri())
         updateViewState { copy(progress = (currentState.progress + 0.25f)) }
-        val audioUrl = createRepository.uploadImage(args.audioUri.toUri())
+        val audioUrl = if (args.audioUri.startsWith("http")) {
+            args.audioUri
+        } else {
+            createRepository.uploadAudio(args.audioUri.toUri())
+        }
         updateViewState { copy(progress = (currentState.progress + 0.25f)) }
         if (imageUrl == null || audioUrl == null) {
             sendAction(VideoProcessingAction.ShowVideoGeneratingError)
