@@ -10,11 +10,15 @@ import me.yeahapps.mypetai.feature.create.ui.action.VideoProcessingAction
 import me.yeahapps.mypetai.feature.create.ui.event.VideoProcessingEvent
 import me.yeahapps.mypetai.feature.create.ui.screen.VideoProcessingScreen
 import me.yeahapps.mypetai.feature.create.ui.state.VideoProcessingState
+import me.yeahapps.mypetai.feature.profile.domain.model.MyWorkModel
+import me.yeahapps.mypetai.feature.profile.domain.repository.MyWorksRepository
 import javax.inject.Inject
 
 @HiltViewModel
 class VideoProcessingViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle, private val createRepository: CreateRepository
+    savedStateHandle: SavedStateHandle,
+    private val createRepository: CreateRepository,
+    private val myWorksRepository: MyWorksRepository
 ) : BaseViewModel<VideoProcessingState, VideoProcessingEvent, VideoProcessingAction>(VideoProcessingState()) {
 
     private val args = savedStateHandle.toRoute<VideoProcessingScreen>()
@@ -56,6 +60,13 @@ class VideoProcessingViewModel @Inject constructor(
             sendAction(VideoProcessingAction.ShowVideoGeneratingError)
             return@viewModelScoped
         }
+        myWorksRepository.createMyWork(
+            MyWorkModel(
+                title = if (args.songName.isEmpty()) "My pet $animateImageId" else args.songName,
+                imageUrl = imageUrl,
+                videoPath = videoPath
+            )
+        )
 
         updateViewState { copy(videoPath = videoPath, progress = 1f) }
     }

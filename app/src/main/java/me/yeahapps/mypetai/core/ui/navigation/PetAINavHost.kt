@@ -20,6 +20,8 @@ import me.yeahapps.mypetai.feature.onboarding.ui.screen.OnboardingScreen
 import me.yeahapps.mypetai.feature.onboarding.ui.screen.OnboardingSubscriptionContainer
 import me.yeahapps.mypetai.feature.onboarding.ui.screen.OnboardingSubscriptionScreen
 import me.yeahapps.mypetai.feature.profile.ui.screen.MyWorksContainer
+import me.yeahapps.mypetai.feature.profile.ui.screen.MyWorksInfoContainer
+import me.yeahapps.mypetai.feature.profile.ui.screen.MyWorksInfoScreen
 import me.yeahapps.mypetai.feature.profile.ui.screen.MyWorksScreen
 import me.yeahapps.mypetai.feature.root.ui.screen.RootContainer
 import me.yeahapps.mypetai.feature.root.ui.screen.RootScreen
@@ -60,15 +62,20 @@ fun PetAINavHost(startDestination: Any, navController: NavHostController, modifi
                 modifier = Modifier.commonModifier(),
                 navigateUp = { navController.navigateUp() },
                 navigateToProcessing = { songName, imageUri, audioUri ->
-                    navController.navigate(VideoProcessingScreen(
-                        songName = songName,
-                        imageUri = imageUri,
-                        audioUri = audioUri
-                    ))
+                    navController.navigate(
+                        VideoProcessingScreen(
+                            songName = songName, imageUri = imageUri, audioUri = audioUri
+                        )
+                    )
                 })
         }
         composable<MyWorksScreen> {
-            MyWorksContainer(modifier = Modifier.commonModifier())
+            MyWorksContainer(modifier = Modifier.commonModifier(), navigateToInfo = {
+                navController.navigate(MyWorksInfoScreen(it))
+            }, navigateUp = { navController.navigateUp() })
+        }
+        composable<MyWorksInfoScreen> {
+            MyWorksInfoContainer(modifier = Modifier.commonModifier(), navigateUp = { navController.navigateUp() })
         }
     }
 }

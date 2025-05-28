@@ -6,7 +6,7 @@ import me.yeahapps.mypetai.feature.profile.domain.model.MyWorkModel
 
 @Entity(tableName = "my_works")
 data class MyWorkEntity(
-    @PrimaryKey val id: Int, val title: String, val imageUrl: String, val videoUrl: String
+    val title: String, val imageUrl: String, val videoPath: String, @PrimaryKey(autoGenerate = true) val id: Int = 0,
 )
 
-fun MyWorkEntity.toDomain() = MyWorkModel(id, title, imageUrl, videoUrl)
+fun MyWorkEntity.toDomain() = MyWorkModel(title, imageUrl, videoPath, id)
