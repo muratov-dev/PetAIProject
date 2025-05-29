@@ -119,6 +119,7 @@ private fun MyWorksContent(modifier: Modifier = Modifier, state: MyWorksState, o
     }
 }
 
+//TODO Сделать универсальнее
 @Composable
 private fun SongCard(modifier: Modifier = Modifier, song: MyWorkModel, onCardClick: (Int) -> Unit = {}) {
     Box(

@@ -24,8 +24,8 @@ class AudioRecorder @Inject constructor(@ApplicationContext private val context:
             setAudioSource(MediaRecorder.AudioSource.MIC)
             setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
             setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
-            setAudioEncodingBitRate(128_000)        // 128 kbps — нормальный битрейт
-            setAudioSamplingRate(44100)             // 44.1 kHz — классика для аудио
+            setAudioEncodingBitRate(128_000)
+            setAudioSamplingRate(44100)
             setOutputFile(outputFile?.absolutePath)
             prepare()
             start()
@@ -43,11 +43,7 @@ class AudioRecorder @Inject constructor(@ApplicationContext private val context:
 
     fun cancelRecording() {
         Timber.d("cancelRecording")
-        recorder?.apply {
-            stop()
-            release()
-        }
-        recorder = null
+        stopRecording()
         if (outputFile?.exists() == true) {
             outputFile?.delete()
         }

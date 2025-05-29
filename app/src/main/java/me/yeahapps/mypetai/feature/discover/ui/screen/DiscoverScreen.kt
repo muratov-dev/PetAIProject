@@ -103,6 +103,7 @@ fun DiscoverContainer(
         }
     }
 
+    //TODO добавить Flow для вывода списка. Убрать инит в VM
     val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
@@ -131,6 +132,7 @@ private fun DiscoverContent(
     val hazeState = rememberHazeState(true)
     val listState = rememberLazyListState()
     val gridState = rememberLazyGridState()
+    //TODO Добавить анимацию затемнения при скролле
     val isCollapsed by remember { derivedStateOf { listState.firstVisibleItemIndex > 0 } }
     val animatedColor by animateColorAsState(
         targetValue = if (isCollapsed) PetAITheme.colors.backgroundPrimary else Color.Transparent,
@@ -138,6 +140,7 @@ private fun DiscoverContent(
         animationSpec = tween(300)
     )
 
+    //TODO Скрыть на время кнопку
     LaunchedEffect(isButtonExpanded) {
         if (isButtonExpanded) {
             delay(5000)
@@ -164,6 +167,7 @@ private fun DiscoverContent(
                             .fillMaxWidth()
                             .hazeSource(hazeState)
                     )
+                    //TODO Вынести
                     Canvas(modifier = Modifier
                         .matchParentSize()
                         .hazeSource(hazeState), onDraw = {
@@ -181,6 +185,7 @@ private fun DiscoverContent(
                             .align(Alignment.BottomCenter),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
+                        //TODO Строки сделать
                         Text(
                             text = "VocalPet",
                             color = PetAITheme.colors.textPrimary,
@@ -193,6 +198,7 @@ private fun DiscoverContent(
                             style = PetAITheme.typography.textRegular
                         )
                         Spacer(Modifier.size(20.dp))
+                        //TODO Сделать кнопку рабочей и вынести
                         Button(
                             onClick = { },
                             shape = RoundedCornerShape(100.dp),
@@ -218,6 +224,7 @@ private fun DiscoverContent(
                 }
             }
 
+            //TODO Подумать над тем, как это лучше сделать
             items(state.songCategories, key = { it.id }) { category ->
                 val filteredSongs = state.songs.filter { it.songCategories.contains(category.name) }
                 if (filteredSongs.isEmpty()) return@items
@@ -237,6 +244,7 @@ private fun DiscoverContent(
                 modifier = Modifier.wrapContentHeight(Alignment.CenterVertically)
             )
         }, endAction = {
+            //TODO Скрыть на время и вынести
             Button(
                 onClick = {
                     if (isButtonExpanded) {
@@ -291,6 +299,7 @@ private fun DiscoverContent(
                 modifier = Modifier.size(16.dp)
             )
         }
+        //TODO Вынести
         if (showBottomSheet) {
             ModalBottomSheet(
                 modifier = Modifier.displayCutoutPadding(),

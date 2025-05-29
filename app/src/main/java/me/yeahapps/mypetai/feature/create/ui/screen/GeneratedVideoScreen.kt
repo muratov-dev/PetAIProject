@@ -45,6 +45,7 @@ import me.yeahapps.mypetai.core.ui.component.topbar.PetAITopAppBar
 import me.yeahapps.mypetai.core.ui.component.topbar.PetAITopBarTitleText
 import me.yeahapps.mypetai.core.ui.theme.PetAITheme
 import me.yeahapps.mypetai.core.ui.utils.collectFlowWithLifecycle
+import me.yeahapps.mypetai.core.ui.utils.shareFile
 import me.yeahapps.mypetai.feature.create.ui.action.GeneratedVideoAction
 import me.yeahapps.mypetai.feature.create.ui.event.GeneratedVideoEvent
 import me.yeahapps.mypetai.feature.create.ui.state.GeneratedVideoState
@@ -145,21 +146,4 @@ private fun GeneratedVideoContent(
             Spacer(Modifier.size(24.dp))
         }
     }
-}
-
-
-fun shareFile(context: Context, file: File, mimeType: String) {
-    val uri = FileProvider.getUriForFile(
-        context, "${context.packageName}.provider", file
-    )
-
-    val shareIntent = Intent(Intent.ACTION_SEND).apply {
-        type = mimeType
-        putExtra(Intent.EXTRA_STREAM, uri)
-        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-    }
-
-    context.startActivity(
-        Intent.createChooser(shareIntent, "Send to:")
-    )
 }

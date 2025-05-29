@@ -124,6 +124,7 @@ fun SongInfoContainer(
         modifier = modifier.systemBarsPadding(),
         exoPlayer = exoPlayer,
         state = state,
+        //TODO Сделать навигацию через ивенты
         onEvent = remember { { event -> viewModel.obtainEvent(event) } },
         navigateToProcessing = navigateToProcessing,
         navigateUp = navigateUp
@@ -143,11 +144,13 @@ private fun SongInfoContent(
 ) {
     val context = LocalContext.current
     val sheetState = rememberModalBottomSheetState()
+    //TODO Почистить переменные, вынести в VM
     var uria by remember { mutableStateOf<Uri?>(null) }
     var isMuted by remember { mutableStateOf(false) }
     var currentVolume by remember { mutableFloatStateOf(0f) }
     var avatarSourceSelectionVisible by remember { mutableStateOf(false) }
 
+    //TODO Вынести, потому что переиспользуется, сделать обработку отказа
     val pickMedia = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
         if (uri != null) {
             avatarSourceSelectionVisible = false
@@ -239,6 +242,7 @@ private fun SongInfoContent(
                         imageVector = ImageVector.vectorResource(R.drawable.ic_gallery), contentDescription = null
                     )
                 }
+                //TODO Вынести в ресурсы
                 Text(text = "Upload Image", style = PetAITheme.typography.buttonTextDefault.copy(fontSize = 18.sp))
             }, onClick = { avatarSourceSelectionVisible = true }, modifier = Modifier.fillMaxWidth())
             Spacer(Modifier.size(16.dp))
@@ -253,6 +257,7 @@ private fun SongInfoContent(
         }
     }
 
+    //TODO Вынести в общий компонент
     if (avatarSourceSelectionVisible) {
         ModalBottomSheet(
             onDismissRequest = { avatarSourceSelectionVisible = false }, sheetState = sheetState,
@@ -323,6 +328,7 @@ private fun SongInfoContent(
     }
 }
 
+//TODO Вынести в Utils
 fun createImageFile(context: Context): File {
     val fileName = "photo_${System.currentTimeMillis()}"
     val storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)

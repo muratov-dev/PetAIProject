@@ -44,6 +44,7 @@ object OnboardingScreen
 @Composable
 fun OnboardingContainer(modifier: Modifier = Modifier, navigateToSubsOnboarding: () -> Unit) {
     val context = LocalContext.current
+    //TODO Придумать, как правильно передавать ExoPlayer, чтобы не создавать его всегда заново
     val exoPlayer = remember {
         ExoPlayer.Builder(context).build().apply {
             val videoUri = "android.resource://${context.packageName}/${R.raw.onboarding}".toUri()
@@ -56,6 +57,7 @@ fun OnboardingContainer(modifier: Modifier = Modifier, navigateToSubsOnboarding:
         }
     }
 
+    //TODO Вынести в отдельный Composable, чтобы не дублировать код
     val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
@@ -79,10 +81,12 @@ fun OnboardingContainer(modifier: Modifier = Modifier, navigateToSubsOnboarding:
 @OptIn(UnstableApi::class)
 @Composable
 private fun OnboardingContent(modifier: Modifier = Modifier, exoPlayer: ExoPlayer, navigateToSubsOnboarding: () -> Unit) {
+    // TODO Придумать как обрабатывать шаги по другому, вынести логику из ui
     var step by remember { mutableIntStateOf(0) }
 
     Box(modifier = modifier.navigationBarsPadding(), contentAlignment = Alignment.BottomCenter) {
         Box {
+            //TODO Сделать Composable для ExoPlayer, чтобы не дублировать код
             AndroidView(modifier = Modifier.fillMaxSize(), factory = { context ->
                 PlayerView(context).apply {
                     player = exoPlayer
@@ -90,6 +94,7 @@ private fun OnboardingContent(modifier: Modifier = Modifier, exoPlayer: ExoPlaye
                     resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FILL
                 }
             })
+            //TODO Вынести отдельно затемнения
             Box(modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight(0.5f)

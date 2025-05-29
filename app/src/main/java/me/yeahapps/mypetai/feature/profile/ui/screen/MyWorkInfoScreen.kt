@@ -51,6 +51,7 @@ import me.yeahapps.mypetai.feature.profile.ui.viewmodel.MyWorksInfoViewModel
 @Serializable
 data class MyWorksInfoScreen(val workId: Long)
 
+//TODO Он повторяет SongInfo, переработай, чтобы было меньше дублирования
 @Composable
 fun MyWorksInfoContainer(
     modifier: Modifier = Modifier, viewModel: MyWorksInfoViewModel = hiltViewModel(), navigateUp: () -> Unit = {}

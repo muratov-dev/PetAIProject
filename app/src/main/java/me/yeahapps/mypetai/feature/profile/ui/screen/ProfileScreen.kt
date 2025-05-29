@@ -20,10 +20,11 @@ import me.yeahapps.mypetai.R
 object ProfileScreen
 
 @Composable
-fun ProfileContainer(modifier: Modifier = Modifier, navigateToMyWorks: () -> Unit) {
+fun ProfileContainer(modifier: Modifier = Modifier, viewModel: ProfileViewModel = hiltViewModel() navigateToMyWorks: () -> Unit) {
     ProfileContent(modifier = modifier.systemBarsPadding(), navigateToMyWorks = navigateToMyWorks)
 }
 
+//TODO вынеси ресурсы и добавь логику на кнопки
 @Composable
 private fun ProfileContent(modifier: Modifier = Modifier, navigateToMyWorks: () -> Unit) {
     Column(modifier = modifier) {

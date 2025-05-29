@@ -1,12 +1,9 @@
 package me.yeahapps.mypetai.feature.create.ui.viewmodel
 
-import android.content.Context
 import androidx.core.net.toUri
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import me.yeahapps.mypetai.core.ui.viewmodel.BaseViewModel
 import me.yeahapps.mypetai.feature.create.data.media.AudioRecorder
-import me.yeahapps.mypetai.feature.create.domain.repository.CreateRepository
 import me.yeahapps.mypetai.feature.create.ui.action.CreateAction
 import me.yeahapps.mypetai.feature.create.ui.event.CreateEvent
 import me.yeahapps.mypetai.feature.create.ui.state.CreateState
@@ -40,8 +37,16 @@ class CreateViewModel @Inject constructor(
                 checkIsButtonEnabled()
             }
 
-            CreateEvent.PlayAudio -> sendAction(CreateAction.PlayAudio)
-            CreateEvent.PauseAudio -> sendAction(CreateAction.PauseAudio)
+            CreateEvent.PlayAudio -> {
+                updateViewState { copy(isAudioPlaying = true) }
+                sendAction(CreateAction.PlayAudio)
+            }
+
+            CreateEvent.PauseAudio -> {
+                updateViewState { copy(isAudioPlaying = false) }
+                sendAction(CreateAction.PauseAudio)
+            }
+
             CreateEvent.StartCreatingVideo -> {
                 val imageUri = currentState.userImageUri ?: return
                 val audioUri = currentState.userAudioUri ?: return

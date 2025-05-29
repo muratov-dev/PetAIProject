@@ -36,9 +36,6 @@ fun PetAINavHost(startDestination: Any, navController: NavHostController, modifi
                     navController.navigate(RootScreen)
                 })
         }
-        composable<OnboardingSubscriptionScreen> {
-            OnboardingSubscriptionContainer(modifier = Modifier.commonModifier())
-        }
         composable<RootScreen> {
             RootContainer(modifier = Modifier.commonModifier(), parentNavController = navController)
         }

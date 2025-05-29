@@ -1,5 +1,6 @@
 package me.yeahapps.mypetai.feature.create.ui.viewmodel
 
+import android.os.CountDownTimer
 import androidx.core.net.toUri
 import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.toRoute
@@ -22,6 +23,7 @@ class VideoProcessingViewModel @Inject constructor(
 ) : BaseViewModel<VideoProcessingState, VideoProcessingEvent, VideoProcessingAction>(VideoProcessingState()) {
 
     private val args = savedStateHandle.toRoute<VideoProcessingScreen>()
+    private var timer: CountDownTimer? = null
 
     override fun obtainEvent(viewEvent: VideoProcessingEvent) {
         when (viewEvent) {
@@ -37,20 +39,18 @@ class VideoProcessingViewModel @Inject constructor(
     }
 
     private fun startCreatingVideo() = viewModelScoped {
+        startProgressUpdateTimer()
         val imageUrl = createRepository.uploadImage(args.imageUri.toUri())
-        updateViewState { copy(progress = (currentState.progress + 0.25f)) }
         val audioUrl = if (args.audioUri.startsWith("http")) {
             args.audioUri
         } else {
             createRepository.uploadAudio(args.audioUri.toUri())
         }
-        updateViewState { copy(progress = (currentState.progress + 0.25f)) }
         if (imageUrl == null || audioUrl == null) {
             sendAction(VideoProcessingAction.ShowVideoGeneratingError)
             return@viewModelScoped
         }
         val animateImageId = createRepository.animateImage(imageUrl, audioUrl)
-        updateViewState { copy(progress = (currentState.progress + 0.25f)) }
         if (animateImageId == null) {
             sendAction(VideoProcessingAction.ShowVideoGeneratingError)
             return@viewModelScoped
@@ -60,6 +60,8 @@ class VideoProcessingViewModel @Inject constructor(
             sendAction(VideoProcessingAction.ShowVideoGeneratingError)
             return@viewModelScoped
         }
+        timer?.cancel()
+        timer = null
         myWorksRepository.createMyWork(
             MyWorkModel(
                 title = if (args.songName.isEmpty()) "My pet $animateImageId" else args.songName,
@@ -69,5 +71,15 @@ class VideoProcessingViewModel @Inject constructor(
         )
 
         updateViewState { copy(videoPath = videoPath, progress = 1f) }
+    }
+
+    private fun startProgressUpdateTimer() {
+        timer = object : CountDownTimer(60000, 1000) {
+            override fun onTick(millisUntilFinished: Long) {
+                updateViewState { copy(progress = (currentState.progress + 0.0165f)) }
+            }
+
+            override fun onFinish() {}
+        }.start()
     }
 }

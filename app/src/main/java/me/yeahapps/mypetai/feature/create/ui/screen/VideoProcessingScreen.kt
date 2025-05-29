@@ -40,6 +40,7 @@ import me.yeahapps.mypetai.R
 import me.yeahapps.mypetai.core.ui.theme.PetAITheme
 import me.yeahapps.mypetai.core.ui.utils.collectFlowWithLifecycle
 import me.yeahapps.mypetai.feature.create.ui.action.VideoProcessingAction
+import me.yeahapps.mypetai.feature.create.ui.component.processing.LoaderSlider
 import me.yeahapps.mypetai.feature.create.ui.event.VideoProcessingEvent
 import me.yeahapps.mypetai.feature.create.ui.state.VideoProcessingState
 import me.yeahapps.mypetai.feature.create.ui.viewmodel.VideoProcessingViewModel
@@ -116,45 +117,5 @@ private fun VideoProcessingScreenContent(
             color = PetAITheme.colors.textPrimary,
             style = PetAITheme.typography.textRegular.copy(fontWeight = FontWeight.Medium)
         )
-    }
-}
-
-@Composable
-fun LoaderSlider(
-    progress: Float,
-    modifier: Modifier = Modifier,
-    trackColor: Color = Color.Gray,
-    trackHeight: Dp = 6.dp,
-) {
-    var sliderWidth by remember { mutableFloatStateOf(0f) }
-    var tempProgress by remember { mutableFloatStateOf(progress) }
-    var isDragging by remember { mutableStateOf(false) }
-
-    val animatedProgress by animateFloatAsState(targetValue = tempProgress, label = "")
-    val trackHeightPx = with(LocalDensity.current) { trackHeight.toPx() }
-
-    Box(modifier = modifier.height(6.dp)) {
-        Canvas(modifier = Modifier.fillMaxSize()) {
-            sliderWidth = size.width
-
-            drawLine(
-                color = trackColor,
-                start = Offset(0f, size.height / 2),
-                end = Offset(size.width, size.height / 2),
-                strokeWidth = trackHeightPx,
-                cap = StrokeCap.Round
-            )
-
-            drawLine(
-                color = Color(0xFFC3F960),
-                start = Offset(0f, size.height / 2),
-                end = Offset(size.width * animatedProgress, size.height / 2),
-                strokeWidth = trackHeightPx,
-                cap = StrokeCap.Round
-            )
-        }
-    }
-    LaunchedEffect(progress) {
-        if (!isDragging) tempProgress = progress
     }
 }

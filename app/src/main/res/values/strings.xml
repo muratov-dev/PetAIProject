@@ -7,6 +7,8 @@
     <string name="common_privacy_policy"><![CDATA[<a href="http://yeahapps.me/privacy">Privacy Policy</a>]]></string>
     <string name="common_terms_of_use"><![CDATA[<a href="http://yeahapps.me/terms">Terms of Use</a>]]></string>
     <string name="common_limiter_version">Limited version</string>
+    <string name="common_get_pro_button_text">Get PRO</string>
+    <string name="common_upload_image_button_text">Upload Image</string>
 
     <!--  Onboarding  -->
     <string name="onboarding_title_1">Make Your Pet Talk!</string>
@@ -21,7 +23,25 @@
 
     <!--  Create  -->
     <string name="create_label">Create</string>
+    <string name="create_select_audio_label">Please use the bottom tool to add audio</string>
+    <string name="create_upload_audio_label">Upload</string>
+    <string name="create_upload_audio_converting_label">Converting</string>
+    <string name="create_record_audio_label">Record</string>
 
     <!--  Profile  -->
     <string name="profile_label">My profile</string>
+
+    <!--  AudioRecord  -->
+    <string name="audio_record_title">Record </string>
+    <string name="audio_record_permission_denied">Microphone access not granted.\nPlease enable it in your device settings.</string>
+    <string name="audio_record_recording_title">Click the button below to stop recording</string>
+    <string name="audio_record_not_recording_title">Click the button below to start recording</string>
+    <string name="audio_record_recording_button_text">Stop Record</string>
+    <string name="audio_record_not_recording_button_text">Start Record</string>
+
+    <!--  ImageSource  -->
+    <string name="image_source_selector_title">Upload from</string>
+    <string name="image_source_gallery">Gallery</string>
+    <string name="image_source_camera">Camera</string>
+
 </resources>

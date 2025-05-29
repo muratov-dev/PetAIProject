@@ -1,20 +1,14 @@
 package me.yeahapps.mypetai.feature.create.ui.screen
 
 import android.Manifest
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,10 +17,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -40,12 +33,12 @@ import me.yeahapps.mypetai.core.ui.component.topbar.PetAITopAppBar
 import me.yeahapps.mypetai.core.ui.component.topbar.PetAITopBarTitleText
 import me.yeahapps.mypetai.core.ui.theme.PetAITheme
 import me.yeahapps.mypetai.core.ui.utils.collectFlowWithLifecycle
+import me.yeahapps.mypetai.core.ui.utils.formatMillisecondsToMmSs
 import me.yeahapps.mypetai.feature.create.ui.action.AudioRecordAction
+import me.yeahapps.mypetai.feature.create.ui.component.audio_record.AudioRecordButton
 import me.yeahapps.mypetai.feature.create.ui.event.AudioRecordEvent
 import me.yeahapps.mypetai.feature.create.ui.state.AudioRecordState
 import me.yeahapps.mypetai.feature.create.ui.viewmodel.AudioRecordViewModel
-import java.util.Locale
-import java.util.concurrent.TimeUnit
 
 @Serializable
 object AudioRecordScreen
@@ -54,6 +47,7 @@ object AudioRecordScreen
 fun AudioRecordContainer(
     modifier: Modifier = Modifier, viewModel: AudioRecordViewModel = hiltViewModel(), navigateUp: () -> Unit
 ) {
+    val context = LocalContext.current
     val state by viewModel.viewState.collectAsStateWithLifecycle()
 
     viewModel.viewActions.collectFlowWithLifecycle(viewModel) { action ->
@@ -65,7 +59,11 @@ fun AudioRecordContainer(
 
     val micPermission =
         rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestPermission()) { granted ->
-            if (!granted) navigateUp()
+            if (!granted) {
+                Toast.makeText(context, context.getString(R.string.audio_record_permission_denied), Toast.LENGTH_SHORT)
+                    .show()
+                navigateUp()
+            }
         }
 
     LaunchedEffect(Unit) {
@@ -85,13 +83,15 @@ private fun AudioRecordContent(
     onEvent: (AudioRecordEvent) -> Unit = {}
 ) {
     Scaffold(modifier = modifier, topBar = {
-        PetAITopAppBar(title = { PetAITopBarTitleText(text = "Record") }, navigationIcon = {
-            PetAIIconButton(
-                icon = R.drawable.ic_arrow_left,
-                onClick = { onEvent(AudioRecordEvent.NavigateUp) },
-                colors = PetAIIconButtonDefaults.colors(containerColor = Color.Transparent)
-            )
-        })
+        PetAITopAppBar(
+            title = { PetAITopBarTitleText(text = stringResource(R.string.audio_record_title)) },
+            navigationIcon = {
+                PetAIIconButton(
+                    icon = R.drawable.ic_arrow_left,
+                    onClick = { onEvent(AudioRecordEvent.NavigateUp) },
+                    colors = PetAIIconButtonDefaults.colors(containerColor = Color.Transparent)
+                )
+            })
     }) { innerPadding ->
         Box(
             modifier = Modifier
@@ -99,8 +99,8 @@ private fun AudioRecordContent(
                 .fillMaxSize()
         ) {
             Text(
-                text = if (state.isRecording) "Click the button below to stop recording"
-                else "Click the button below to start recording",
+                text = if (state.isRecording) stringResource(R.string.audio_record_recording_title)
+                else stringResource(R.string.audio_record_not_recording_title),
                 color = PetAITheme.colors.textPrimary.copy(alpha = 0.7f),
                 style = PetAITheme.typography.textMedium.copy(fontSize = 16.sp, lineHeight = 24.sp),
                 textAlign = TextAlign.Center,
@@ -110,34 +110,14 @@ private fun AudioRecordContent(
                     .align(Alignment.TopCenter)
             )
 
-            Column(
-                modifier = Modifier
-                    .size(184.dp)
-                    .background(color = PetAITheme.colors.buttonPrimaryDefault, shape = CircleShape)
-                    .clip(CircleShape)
-                    .align(Alignment.Center)
-                    .clickable {
-                        if (state.isRecording) onEvent(AudioRecordEvent.StopRecording)
-                        else onEvent(AudioRecordEvent.StartRecording)
-                    },
-                verticalArrangement = Arrangement.spacedBy(10.dp, alignment = Alignment.CenterVertically),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Icon(
-                    imageVector = ImageVector.vectorResource(if (state.isRecording) R.drawable.ic_stop else R.drawable.ic_record),
-                    tint = PetAITheme.colors.buttonTextPrimary,
-                    contentDescription = null,
-                    modifier = Modifier.size(24.dp)
-                )
-                Text(
-                    text = if (state.isRecording) "Stop Record" else "Start Record",
-                    color = PetAITheme.colors.buttonTextPrimary,
-                    style = PetAITheme.typography.buttonTextDefault
-                )
-            }
+            AudioRecordButton(
+                modifier = Modifier.align(Alignment.Center), isRecording = state.isRecording,
+                onStopRecording = { onEvent(AudioRecordEvent.StopRecording) },
+                onStartRecording = { onEvent(AudioRecordEvent.StartRecording) },
+            )
 
             Text(
-                text = formatMillisecondsToMmSs(state.audioDuration),
+                text = state.audioDuration.formatMillisecondsToMmSs(),
                 color = PetAITheme.colors.textPrimary.copy(alpha = 0.7f),
                 style = PetAITheme.typography.textMedium.copy(fontSize = 16.sp, lineHeight = 24.sp),
                 textAlign = TextAlign.Center,
@@ -148,11 +128,4 @@ private fun AudioRecordContent(
             )
         }
     }
-}
-
-private fun formatMillisecondsToMmSs(milliseconds: Long): String {
-    val minutes = TimeUnit.MILLISECONDS.toMinutes(milliseconds)
-    val seconds = TimeUnit.MILLISECONDS.toSeconds(milliseconds) - TimeUnit.MINUTES.toSeconds(minutes)
-
-    return String.format(Locale("ru", "RU"), "%02d:%02d", minutes, seconds)
 }

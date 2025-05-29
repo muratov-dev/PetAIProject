@@ -73,7 +73,7 @@ class CreateRepositoryImpl @Inject constructor(
         try {
             val response = mainApiService.getVideo(GetVideoRequestDto(animateIdList = listOf(token)))
             if (response.body()?.videoData?.videoData?.firstOrNull()?.state == "queue") {
-                delay(30000)
+                delay(5000)
                 while (true) {
                     val pollResponse = mainApiService.getVideo(GetVideoRequestDto(animateIdList = listOf(token)))
                     if (pollResponse.body()?.videoData?.videoData?.firstOrNull()?.state != "queue") {
@@ -81,7 +81,7 @@ class CreateRepositoryImpl @Inject constructor(
                         val file = saveVideoSilently(videoUrl ?: return null, "$token.mp4")
                         return file?.absolutePath
                     }
-                    delay(30_000)
+                    delay(5_000)
                 }
             } else {
                 val videoUrl = response.body()?.videoData?.videoData?.firstOrNull()?.url

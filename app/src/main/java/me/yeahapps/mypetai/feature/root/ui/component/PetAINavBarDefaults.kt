@@ -1,18 +1,11 @@
 package me.yeahapps.mypetai.feature.root.ui.component
 
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
 import me.yeahapps.mypetai.core.ui.theme.PetAITheme
 
 object PetAINavBarDefaults {
-
-    val VerticalPadding = 16.dp
-    val HorizontalPadding = 16.dp
-    val ItemPadding = PaddingValues(vertical = VerticalPadding, horizontal = HorizontalPadding)
-
     @Composable
     @Stable
     fun colors(
