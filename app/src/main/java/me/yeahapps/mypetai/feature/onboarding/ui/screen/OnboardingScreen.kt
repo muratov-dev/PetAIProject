@@ -148,7 +148,7 @@ private fun OnboardingContent(modifier: Modifier = Modifier, exoPlayer: ExoPlaye
                     .padding(horizontal = 16.dp)
                     .fillMaxWidth()
             )
-            if (step == 2) {
+            if (step == 1) {
                 Spacer(Modifier.size(6.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -171,7 +171,7 @@ private fun OnboardingContent(modifier: Modifier = Modifier, exoPlayer: ExoPlaye
                     }
                 }
             }
-            Spacer(Modifier.size(if (step == 2) 16.dp else 36.dp))
+            Spacer(Modifier.size(if (step == 1) 16.dp else 36.dp))
         }
     }
 }

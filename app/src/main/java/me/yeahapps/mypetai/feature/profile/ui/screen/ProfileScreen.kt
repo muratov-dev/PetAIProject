@@ -1,5 +1,6 @@
 package me.yeahapps.mypetai.feature.profile.ui.screen
 
+import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -16,8 +17,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import me.yeahapps.mypetai.R
@@ -39,6 +42,7 @@ fun ProfileContainer(
 //TODO вынеси ресурсы и добавь логику на кнопки
 @Composable
 private fun ProfileContent(modifier: Modifier = Modifier, myWorksCount: Int, navigateToMyWorks: () -> Unit) {
+    val context = LocalContext.current
     Column(modifier = modifier) {
         PetAISecondaryTopAppBar(title = {
             Text(
@@ -69,20 +73,18 @@ private fun ProfileContent(modifier: Modifier = Modifier, myWorksCount: Int, nav
             PetAISecondaryButton(text = "Rate Us", onClick = {}, modifier = Modifier.fillMaxWidth(), startContent = {
                 Icon(imageVector = ImageVector.vectorResource(R.drawable.ic_rate), contentDescription = null)
             })
-            PetAISecondaryButton(
-                text = "Terms of Use",
-                onClick = {},
-                modifier = Modifier.fillMaxWidth(),
-                startContent = {
-                    Icon(imageVector = ImageVector.vectorResource(R.drawable.ic_terms), contentDescription = null)
-                })
-            PetAISecondaryButton(
-                text = "Privacy Policy",
-                onClick = {},
-                modifier = Modifier.fillMaxWidth(),
-                startContent = {
-                    Icon(imageVector = ImageVector.vectorResource(R.drawable.ic_policy), contentDescription = null)
-                })
+            PetAISecondaryButton(text = "Terms of Use", onClick = {
+                val intent = Intent(Intent.ACTION_VIEW, "https://www.yeahapps.me/terms".toUri())
+                context.startActivity(intent)
+            }, modifier = Modifier.fillMaxWidth(), startContent = {
+                Icon(imageVector = ImageVector.vectorResource(R.drawable.ic_terms), contentDescription = null)
+            })
+            PetAISecondaryButton(text = "Privacy Policy", onClick = {
+                val intent = Intent(Intent.ACTION_VIEW, "http://yeahapps.me/privacy".toUri())
+                context.startActivity(intent)
+            }, modifier = Modifier.fillMaxWidth(), startContent = {
+                Icon(imageVector = ImageVector.vectorResource(R.drawable.ic_policy), contentDescription = null)
+            })
         }
     }
 }

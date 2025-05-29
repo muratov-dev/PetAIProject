@@ -2,7 +2,6 @@ package me.yeahapps.mypetai.feature.discover.ui.screen
 
 import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
@@ -11,7 +10,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,10 +17,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -153,9 +150,7 @@ private fun DiscoverContent(
 
     Box(modifier = modifier.fillMaxSize()) {
         LazyColumn(
-            state = listState,
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(20.dp)
+            state = listState, modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             item {
                 Box(modifier = Modifier.fillMaxWidth()) {
@@ -168,17 +163,18 @@ private fun DiscoverContent(
                             .hazeSource(hazeState)
                     )
                     //TODO Вынести
-                    Canvas(modifier = Modifier
-                        .matchParentSize()
-                        .hazeSource(hazeState), onDraw = {
-                        drawRect(
-                            Brush.verticalGradient(
-                                listOf(
-                                    Color(0xA60A0701), Color(0x40040401), Color(0xFF040400)
+                    Canvas(
+                        modifier = Modifier
+                            .matchParentSize()
+                            .hazeSource(hazeState), onDraw = {
+                            drawRect(
+                                Brush.verticalGradient(
+                                    listOf(
+                                        Color(0xA60A0701), Color(0x40040401), Color(0xFF040400)
+                                    )
                                 )
                             )
-                        )
-                    })
+                        })
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -200,7 +196,7 @@ private fun DiscoverContent(
                         Spacer(Modifier.size(20.dp))
                         //TODO Сделать кнопку рабочей и вынести
                         Button(
-                            onClick = { },
+                            onClick = { onEvent(DiscoverEvent.NavigateToCreate) },
                             shape = RoundedCornerShape(100.dp),
                             contentPadding = PaddingValues(vertical = 12.dp, horizontal = 40.dp),
                             border = BorderStroke(2.dp, PetAITheme.colors.buttonPrimaryDefault),
@@ -236,53 +232,59 @@ private fun DiscoverContent(
                 }
             }
         }
-        PetAISecondaryTopAppBar(backgroundColor = animatedColor, title = {
-            Text(
-                text = "PETTALK",
-                color = Color.White,
-                style = PetAITheme.typography.titleBlack,
-                modifier = Modifier.wrapContentHeight(Alignment.CenterVertically)
-            )
-        }, endAction = {
-            //TODO Скрыть на время и вынести
-            Button(
-                onClick = {
-                    if (isButtonExpanded) {
-                        activity?.let { onEvent(DiscoverEvent.StartSubscription(it)) }
-                    } else {
-                        isButtonExpanded = true
-                    }
-                },
-                shape = RoundedCornerShape(100.dp),
-                contentPadding = PaddingValues(vertical = 8.dp, horizontal = 16.dp),
-                colors = ButtonColors(
-                    containerColor = PetAITheme.colors.buttonPrimaryDefault,
-                    contentColor = PetAITheme.colors.buttonTextPrimary,
-                    disabledContainerColor = Color.White,
-                    disabledContentColor = Color.Black
-                ),
-                modifier = Modifier
-                    .wrapContentSize()
-                    .statusBarsPadding()
-            ) {
-                Row(
-                    modifier = Modifier.animateContentSize(tween(300)),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(4.dp),
-                ) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.ic_ribbon), contentDescription = null
-                    )
-                    if (isButtonExpanded) {
-                        Text(
-                            text = "Get PRO",
-                            color = PetAITheme.colors.buttonTextPrimary,
-                            style = PetAITheme.typography.buttonTextDefault
-                        )
-                    }
-                }
-            }
-        })
+        PetAISecondaryTopAppBar(
+            backgroundColor = animatedColor,
+            title = {
+                Text(
+                    text = "PETTALK",
+                    color = Color.White,
+                    style = PetAITheme.typography.titleBlack,
+                    modifier = Modifier
+                        .wrapContentHeight(Alignment.CenterVertically)
+                        .systemBarsPadding()
+                )
+            },
+//            endAction = {
+//            //TODO Скрыть на время и вынести
+//            Button(
+//                onClick = {
+//                    if (isButtonExpanded) {
+//                        activity?.let { onEvent(DiscoverEvent.StartSubscription(it)) }
+//                    } else {
+//                        isButtonExpanded = true
+//                    }
+//                },
+//                shape = RoundedCornerShape(100.dp),
+//                contentPadding = PaddingValues(vertical = 8.dp, horizontal = 16.dp),
+//                colors = ButtonColors(
+//                    containerColor = PetAITheme.colors.buttonPrimaryDefault,
+//                    contentColor = PetAITheme.colors.buttonTextPrimary,
+//                    disabledContainerColor = Color.White,
+//                    disabledContentColor = Color.Black
+//                ),
+//                modifier = Modifier
+//                    .wrapContentSize()
+//                    .statusBarsPadding()
+//            ) {
+//                Row(
+//                    modifier = Modifier.animateContentSize(tween(300)),
+//                    verticalAlignment = Alignment.CenterVertically,
+//                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+//                ) {
+//                    Icon(
+//                        imageVector = ImageVector.vectorResource(R.drawable.ic_ribbon), contentDescription = null
+//                    )
+//                    if (isButtonExpanded) {
+//                        Text(
+//                            text = "Get PRO",
+//                            color = PetAITheme.colors.buttonTextPrimary,
+//                            style = PetAITheme.typography.buttonTextDefault
+//                        )
+//                    }
+//                }
+//            }
+//        }
+        )
         FloatingActionButton(
             onClick = { onEvent(DiscoverEvent.NavigateToCreate) },
             shape = CircleShape,
