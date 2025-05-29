@@ -19,7 +19,7 @@ android {
         targetSdk = 35
         val majorVersion = 1
         val minorVersion = 0
-        val patchVersion = 0
+        val patchVersion = 1
 
         versionCode = majorVersion * 10000 + minorVersion * 100 + patchVersion
         versionName = "${majorVersion}.${minorVersion}.${patchVersion}"
@@ -80,11 +80,10 @@ dependencies {
     implementation(libs.bundles.media3)
     implementation(libs.media)
 
+    implementation("com.google.android.play:review:2.0.2")
+
     implementation(platform(libs.firebase.bom))
     implementation(libs.bundles.firebase)
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.8.1")
-    implementation("com.google.android.play:core-ktx:1.8.1")
-
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
