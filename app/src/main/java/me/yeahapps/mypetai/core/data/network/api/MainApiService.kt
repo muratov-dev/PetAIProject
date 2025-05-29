@@ -4,6 +4,7 @@ import me.yeahapps.mypetai.core.data.network.model.animate_image.request.Animate
 import me.yeahapps.mypetai.core.data.network.model.animate_image.response.AnimateImageResponseDto
 import me.yeahapps.mypetai.core.data.network.model.get_video.request.GetVideoRequestDto
 import me.yeahapps.mypetai.core.data.network.model.get_video.response.GetVideoResponseDto
+import me.yeahapps.mypetai.core.data.network.model.save_user.SaveUserRequestDto
 import me.yeahapps.mypetai.core.data.network.model.upload_file.UploadFileResponseDto
 import okhttp3.MultipartBody
 import retrofit2.Response
@@ -15,17 +16,20 @@ import retrofit2.http.Query
 
 interface MainApiService {
 
+    @POST("user/save_user_login")
+    suspend fun saveUserId(@Body userIdRequest: SaveUserRequestDto)
+
     @Multipart
     @POST("phone_file_v2/upload_file")
     suspend fun uploadFile(
         @Part file: MultipartBody.Part,
+        @Query("user_id") userId: String,
         @Query("account_id") accountId: String = "",
         @Query("app_version") appVersion: String = "5.15.0",
         @Query("language") language: String = "ru",
         @Query("platform_type") platformType: String = "ANDROID",
         @Query("timestamp") timestamp: Long = 1746482384769,
-        @Query("token") token: String = "19e86856a8a35da5f938fb53202323ca",
-        @Query("user_id") userId: String = "AAFA6D86-8064-4A45-AA20-C612051B73EF"
+        @Query("token") token: String = "19e86856a8a35da5f938fb53202323ca"
     ): Response<UploadFileResponseDto>
 
     @POST("face_v5/animate_image_v5")

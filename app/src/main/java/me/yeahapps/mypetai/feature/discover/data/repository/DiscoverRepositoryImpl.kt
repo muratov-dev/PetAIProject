@@ -1,10 +1,14 @@
 package me.yeahapps.mypetai.feature.discover.data.repository
 
 import android.content.Context
+import android.content.SharedPreferences
+import androidx.core.content.edit
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
+import me.yeahapps.mypetai.core.data.network.api.MainApiService
+import me.yeahapps.mypetai.core.data.network.model.save_user.SaveUserRequestDto
 import me.yeahapps.mypetai.core.di.ApplicationCoroutineScope
 import me.yeahapps.mypetai.feature.discover.data.local.DiscoverDao
 import me.yeahapps.mypetai.feature.discover.data.model.dto.ContentDto
@@ -19,14 +23,29 @@ import java.io.BufferedInputStream
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
+import java.util.UUID
 import java.util.zip.ZipInputStream
 import javax.inject.Inject
 
 class DiscoverRepositoryImpl @Inject constructor(
     @ApplicationContext context: Context,
     @ApplicationCoroutineScope coroutineScope: CoroutineScope,
-    private val discoverDao: DiscoverDao
+    private val apiService: MainApiService,
+    private val discoverDao: DiscoverDao,
+    private val preferences: SharedPreferences
 ) : DiscoverRepository {
+
+    override suspend fun saveUser() {
+        val savedUserId = preferences.getString("userId", null)
+        if (savedUserId != null) return
+        val userId = UUID.randomUUID().toString().uppercase()
+        apiService.saveUserId(SaveUserRequestDto(userId = userId))
+        preferences.edit {
+            putString("userId", userId)
+            putBoolean("isFirstLaunch", false)
+        }
+    }
+
     init {
         coroutineScope.launch {
             val json = readJSONFromAssets(context, "petContent.json")

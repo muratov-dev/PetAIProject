@@ -3,12 +3,10 @@ package me.yeahapps.mypetai.feature.discover.ui.viewmodel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import me.yeahapps.mypetai.core.ui.viewmodel.BaseViewModel
 import me.yeahapps.mypetai.feature.discover.domain.model.SongCategoryModel
-import me.yeahapps.mypetai.feature.discover.domain.model.SongModel
 import me.yeahapps.mypetai.feature.discover.domain.repository.DiscoverRepository
 import me.yeahapps.mypetai.feature.discover.ui.action.DiscoverAction
 import me.yeahapps.mypetai.feature.discover.ui.event.DiscoverEvent
 import me.yeahapps.mypetai.feature.discover.ui.state.DiscoverState
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -19,7 +17,7 @@ class DiscoverViewModel @Inject constructor(
     override fun obtainEvent(viewEvent: DiscoverEvent) {
         when (viewEvent) {
             is DiscoverEvent.SelectCategory -> updateViewState { copy(selectedCategory = viewEvent.category) }
-            DiscoverEvent.InitState -> initState()
+            DiscoverEvent.InitState -> {}
 
             is DiscoverEvent.NavigateToSongInfo -> sendAction(DiscoverAction.NavigateToSongInfo(viewEvent.song))
 
@@ -28,7 +26,12 @@ class DiscoverViewModel @Inject constructor(
         }
     }
 
+    init {
+        initState()
+    }
+
     private fun initState() = viewModelScoped {
+        discoverRepository.saveUser()
         val songs = discoverRepository.getSongs()
 
         val categories = discoverRepository.getSongCategories()

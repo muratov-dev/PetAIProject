@@ -1,9 +1,9 @@
 package me.yeahapps.mypetai.feature.create.data.repository
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.net.Uri
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
@@ -13,20 +13,19 @@ import me.yeahapps.mypetai.core.data.network.model.animate_image.request.PhotoIn
 import me.yeahapps.mypetai.core.data.network.model.animate_image.request.PtInfo
 import me.yeahapps.mypetai.core.data.network.model.get_video.request.GetVideoRequestDto
 import me.yeahapps.mypetai.core.data.network.utils.asRequestBody
-import me.yeahapps.mypetai.core.di.ApplicationCoroutineScope
 import me.yeahapps.mypetai.feature.create.domain.repository.CreateRepository
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
-import java.io.IOException
 import java.net.URL
 import javax.inject.Inject
 
 class CreateRepositoryImpl @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val mainApiService: MainApiService
+    private val mainApiService: MainApiService,
+    private val sharedPreferences: SharedPreferences,
 ) : CreateRepository {
 
     private val contentResolver = context.contentResolver
@@ -46,8 +45,10 @@ class CreateRepositoryImpl @Inject constructor(
     }
 
     private suspend fun uploadFile(multipartBody: MultipartBody.Part): String? {
+        val userId = sharedPreferences.getString("userId", null)
+            ?: throw IllegalStateException("User ID not found in SharedPreferences")
         try {
-            val fileData = mainApiService.uploadFile(file = multipartBody)
+            val fileData = mainApiService.uploadFile(file = multipartBody, userId = userId)
             return fileData.body()?.fileData?.filePath
         } catch (ex: Exception) {
             Timber.e(ex)
@@ -56,10 +57,14 @@ class CreateRepositoryImpl @Inject constructor(
     }
 
     override suspend fun animateImage(imageUrl: String, audioUrl: String): String? {
+        val userId = sharedPreferences.getString("userId", null)
+            ?: throw IllegalStateException("User ID not found in SharedPreferences")
         try {
             val request = mainApiService.animateImage(
                 requestData = AnimateImageRequestDto(
-                    ptInfos = listOf(PtInfo(audioUrl)), photoInfoList = listOf(PhotoInfo(photoPath = imageUrl))
+                    ptInfos = listOf(PtInfo(audioUrl)),
+                    photoInfoList = listOf(PhotoInfo(photoPath = imageUrl)),
+                    userId = userId
                 )
             )
             return request.body()?.animateImageData?.animateImageId
@@ -70,12 +75,15 @@ class CreateRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getVideoUrl(token: String): String? {
+        val userId = sharedPreferences.getString("userId", null)
+            ?: throw IllegalStateException("User ID not found in SharedPreferences")
         try {
-            val response = mainApiService.getVideo(GetVideoRequestDto(animateIdList = listOf(token)))
+            val response = mainApiService.getVideo(GetVideoRequestDto(animateIdList = listOf(token), userId = userId))
             if (response.body()?.videoData?.videoData?.firstOrNull()?.state == "queue") {
                 delay(5000)
                 while (true) {
-                    val pollResponse = mainApiService.getVideo(GetVideoRequestDto(animateIdList = listOf(token)))
+                    val pollResponse =
+                        mainApiService.getVideo(GetVideoRequestDto(animateIdList = listOf(token), userId = userId))
                     if (pollResponse.body()?.videoData?.videoData?.firstOrNull()?.state != "queue") {
                         val videoUrl = pollResponse.body()?.videoData?.videoData?.firstOrNull()?.url
                         val file = saveVideoSilently(videoUrl ?: return null, "$token.mp4")
@@ -95,7 +103,7 @@ class CreateRepositoryImpl @Inject constructor(
     }
 
     suspend fun saveVideoSilently(videoUrl: String, fileName: String): File? {
-        return withContext(Dispatchers.IO){
+        return withContext(Dispatchers.IO) {
             try {
                 val url = URL(videoUrl)
                 val connection = url.openConnection()

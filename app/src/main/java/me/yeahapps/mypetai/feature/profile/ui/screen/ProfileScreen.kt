@@ -1,32 +1,44 @@
 package me.yeahapps.mypetai.feature.profile.ui.screen
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import me.yeahapps.mypetai.R
 import me.yeahapps.mypetai.core.ui.component.button.filled.PetAISecondaryButton
 import me.yeahapps.mypetai.core.ui.component.topbar.PetAISecondaryTopAppBar
 import me.yeahapps.mypetai.core.ui.theme.PetAITheme
-import kotlinx.serialization.Serializable
-import me.yeahapps.mypetai.R
-
-@Serializable
-object ProfileScreen
+import me.yeahapps.mypetai.feature.profile.ui.viewmodel.ProfileViewModel
 
 @Composable
-fun ProfileContainer(modifier: Modifier = Modifier, viewModel: ProfileViewModel = hiltViewModel() navigateToMyWorks: () -> Unit) {
-    ProfileContent(modifier = modifier.systemBarsPadding(), navigateToMyWorks = navigateToMyWorks)
+fun ProfileContainer(
+    modifier: Modifier = Modifier, viewModel: ProfileViewModel = hiltViewModel(), navigateToMyWorks: () -> Unit
+) {
+    val myWorksCount by viewModel.myWorksCount.collectAsStateWithLifecycle()
+    ProfileContent(
+        modifier = modifier.systemBarsPadding(), myWorksCount = myWorksCount, navigateToMyWorks = navigateToMyWorks
+    )
 }
 
 //TODO вынеси ресурсы и добавь логику на кнопки
 @Composable
-private fun ProfileContent(modifier: Modifier = Modifier, navigateToMyWorks: () -> Unit) {
+private fun ProfileContent(modifier: Modifier = Modifier, myWorksCount: Int, navigateToMyWorks: () -> Unit) {
     Column(modifier = modifier) {
         PetAISecondaryTopAppBar(title = {
             Text(
@@ -38,9 +50,11 @@ private fun ProfileContent(modifier: Modifier = Modifier, navigateToMyWorks: () 
         })
         Spacer(modifier = Modifier.height(8.dp))
         PetAISecondaryButton(
-            text = "My Works (0)",
+            text = "My Works ($myWorksCount)",
             onClick = navigateToMyWorks,
-            modifier = Modifier.padding(horizontal = 16.dp).fillMaxWidth(),
+            modifier = Modifier
+                .padding(horizontal = 16.dp)
+                .fillMaxWidth(),
             startContent = {
                 Icon(imageVector = ImageVector.vectorResource(R.drawable.ic_my_works), contentDescription = null)
             },
