@@ -1,5 +1,6 @@
 package me.yeahapps.mypetai.feature.profile.ui.screen
 
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -67,10 +68,35 @@ private fun ProfileContent(modifier: Modifier = Modifier, myWorksCount: Int, nav
             })
         Spacer(modifier = Modifier.height(24.dp))
         Column(modifier = Modifier.padding(horizontal = 16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            PetAISecondaryButton(text = "Share", onClick = {}, modifier = Modifier.fillMaxWidth(), startContent = {
+            PetAISecondaryButton(text = "Share", onClick = {
+                val packageName = context.packageName
+                val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                    type = "text/plain"
+                    putExtra(Intent.EXTRA_SUBJECT, "I recommend the application")
+                    putExtra(
+                        Intent.EXTRA_TEXT,
+                        "Try this application: https://play.google.com/store/apps/details?id=$packageName"
+                    )
+                }
+                context.startActivity(Intent.createChooser(shareIntent, "Share with"))
+            }, modifier = Modifier.fillMaxWidth(), startContent = {
                 Icon(imageVector = ImageVector.vectorResource(R.drawable.ic_share), contentDescription = null)
             })
-            PetAISecondaryButton(text = "Rate Us", onClick = {}, modifier = Modifier.fillMaxWidth(), startContent = {
+            PetAISecondaryButton(text = "Rate Us", onClick = {
+                val packageName = context.packageName
+                val uri = "market://details?id=$packageName".toUri()
+                val intent = Intent(Intent.ACTION_VIEW, uri).apply {
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                }
+                try {
+                    context.startActivity(intent)
+                } catch (e: ActivityNotFoundException) {
+                    val webIntent = Intent(
+                        Intent.ACTION_VIEW, "https://play.google.com/store/apps/details?id=$packageName".toUri()
+                    )
+                    context.startActivity(webIntent)
+                }
+            }, modifier = Modifier.fillMaxWidth(), startContent = {
                 Icon(imageVector = ImageVector.vectorResource(R.drawable.ic_rate), contentDescription = null)
             })
             PetAISecondaryButton(text = "Terms of Use", onClick = {

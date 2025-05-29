@@ -7,8 +7,10 @@ import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
+import me.yeahapps.mypetai.core.ui.component.RequestInAppReview
 import me.yeahapps.mypetai.core.ui.theme.PetAITheme
 import me.yeahapps.mypetai.feature.onboarding.ui.screen.OnboardingScreen
 import me.yeahapps.mypetai.feature.root.ui.screen.RootScreen
@@ -26,14 +28,12 @@ class MainActivity : ComponentActivity() {
             statusBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
             navigationBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
         )
+        val isFirstLaunch = sharedPreferences.getBoolean("isFirstLaunch", true)
         setContent {
             val navController = rememberNavController()
             PetAITheme {
-                PetAIApp(
-                    navController,
-                    startDestination = if (sharedPreferences.getBoolean("isFirstLaunch", true)) OnboardingScreen
-                    else RootScreen
-                )
+                PetAIApp(navController, startDestination = if (isFirstLaunch) OnboardingScreen else RootScreen)
+                if (!isFirstLaunch) RequestInAppReview(LocalContext.current)
             }
         }
     }

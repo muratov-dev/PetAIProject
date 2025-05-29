@@ -143,7 +143,7 @@ private fun OnboardingContent(modifier: Modifier = Modifier, exoPlayer: ExoPlaye
             Spacer(Modifier.size(24.dp))
             PetAIPrimaryButton(
                 centerContent = stringResource(R.string.common_continue),
-                onClick = { if (step == 2) navigateToSubsOnboarding() else step++ },
+                onClick = { if (step == 1) navigateToSubsOnboarding() else step++ },
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
                     .fillMaxWidth()

@@ -17,8 +17,13 @@ android {
         applicationId = "me.yeahapps.mypetai"
         minSdk = 26
         targetSdk = 35
-        versionCode = 5
-        versionName = "5.0"
+        val majorVersion = 1
+        val minorVersion = 0
+        val patchVersion = 0
+
+        versionCode = majorVersion * 10000 + minorVersion * 100 + patchVersion
+        versionName = "${majorVersion}.${minorVersion}.${patchVersion}"
+        base.archivesName = "PetAI-$versionName"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -29,7 +34,9 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isDebuggable = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
@@ -76,6 +83,7 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.bundles.firebase)
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.8.1")
+    implementation("com.google.android.play:core-ktx:1.8.1")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
