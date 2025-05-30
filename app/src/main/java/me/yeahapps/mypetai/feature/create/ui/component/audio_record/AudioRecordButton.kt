@@ -28,7 +28,7 @@ fun AudioRecordButton(
             .size(184.dp)
             .background(color = PetAITheme.colors.buttonPrimaryDefault, shape = CircleShape)
             .clip(CircleShape)
-            .clickable { if (isRecording) onStopRecording else onStartRecording },
+            .clickable { if (isRecording) onStopRecording() else onStartRecording() },
         verticalArrangement = Arrangement.spacedBy(10.dp, alignment = Alignment.CenterVertically),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {

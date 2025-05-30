@@ -1,6 +1,7 @@
 package me.yeahapps.mypetai.feature.discover.ui.viewmodel
 
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.collectLatest
 import me.yeahapps.mypetai.core.ui.viewmodel.BaseViewModel
 import me.yeahapps.mypetai.feature.discover.domain.model.SongCategoryModel
 import me.yeahapps.mypetai.feature.discover.domain.repository.DiscoverRepository
@@ -27,20 +28,19 @@ class DiscoverViewModel @Inject constructor(
     }
 
     init {
-        initState()
-    }
-
-    private fun initState() = viewModelScoped {
-        discoverRepository.saveUser()
-        val songs = discoverRepository.getSongs()
-
-        val categories = discoverRepository.getSongCategories()
-        val bottomSheetCategories = songs.flatMap { it.songCategories }.distinct()
-        val bottomSheetCategoriesMapped = bottomSheetCategories.mapIndexed { index, category ->
-            SongCategoryModel(index, category)
+        viewModelScoped {
+            discoverRepository.getSongs().collectLatest { songs ->
+                val bottomSheetCategories = songs.flatMap { it.songCategories }.distinct()
+                val bottomSheetCategoriesMapped = bottomSheetCategories.mapIndexed { index, category ->
+                    SongCategoryModel(index, category)
+                }
+                updateViewState { copy(songs = songs, bottomSheetCategories = bottomSheetCategoriesMapped) }
+            }
         }
-        updateViewState {
-            copy(songs = songs, songCategories = categories, bottomSheetCategories = bottomSheetCategoriesMapped)
+        viewModelScoped {
+            discoverRepository.getSongCategories().collectLatest { categories ->
+                updateViewState { copy(songCategories = categories) }
+            }
         }
     }
 }

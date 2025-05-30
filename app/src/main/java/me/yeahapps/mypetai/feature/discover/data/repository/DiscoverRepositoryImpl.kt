@@ -5,6 +5,8 @@ import android.content.SharedPreferences
 import androidx.core.content.edit
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import me.yeahapps.mypetai.core.data.network.api.MainApiService
@@ -78,12 +80,14 @@ class DiscoverRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getSongs(): List<SongModel> {
-        return discoverDao.getSongs().map { song -> song.toDomain() }
+    override suspend fun getSongs(): Flow<List<SongModel>> {
+        return discoverDao.getSongs().map { songs -> songs.map { it.toDomain() } }
     }
 
-    override suspend fun getSongCategories(): List<SongCategoryModel> {
-        return discoverDao.getCategories().map { category -> category.toDomain() }
+    override suspend fun getSongCategories(): Flow<List<SongCategoryModel>> {
+        return discoverDao.getCategories().map { categories ->
+            categories.map { it.toDomain() }
+        }
     }
 
     private fun unzipToCache(zipFile: File, cacheDir: File): List<File> {

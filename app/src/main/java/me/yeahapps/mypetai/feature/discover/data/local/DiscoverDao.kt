@@ -3,6 +3,7 @@ package me.yeahapps.mypetai.feature.discover.data.local
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Upsert
+import kotlinx.coroutines.flow.Flow
 import me.yeahapps.mypetai.feature.discover.data.model.entity.SongCategoryEntity
 import me.yeahapps.mypetai.feature.discover.data.model.entity.SongEntity
 
@@ -10,10 +11,10 @@ import me.yeahapps.mypetai.feature.discover.data.model.entity.SongEntity
 interface DiscoverDao {
 
     @Query("select * from songs")
-    suspend fun getSongs(): List<SongEntity>
+    fun getSongs(): Flow<List<SongEntity>>
 
     @Query("select * from song_categories")
-    suspend fun getCategories(): List<SongCategoryEntity>
+    fun getCategories(): Flow<List<SongCategoryEntity>>
 
     @Query("select * from songs where id = :songId limit 1")
     suspend fun getSongInfo(songId: Int): SongEntity
