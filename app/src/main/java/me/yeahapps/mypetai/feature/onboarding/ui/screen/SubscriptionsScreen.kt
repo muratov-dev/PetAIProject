@@ -26,15 +26,15 @@ import me.yeahapps.mypetai.core.ui.theme.PetAITheme
 import kotlinx.serialization.Serializable
 import me.yeahapps.mypetai.R
 @Serializable
-object OnboardingSubscriptionScreen
+object SubscriptionsScreen
 
 @Composable
-fun OnboardingSubscriptionContainer(modifier: Modifier = Modifier) {
-    OnboardingSubscriptionContent(modifier = modifier)
+fun SubscriptionsContainer(modifier: Modifier = Modifier) {
+    SubscriptionsContent(modifier = modifier)
 }
 
 @Composable
-private fun OnboardingSubscriptionContent(modifier: Modifier = Modifier) {
+private fun SubscriptionsContent(modifier: Modifier = Modifier) {
 
     var selectedSubscriptionId by remember { mutableIntStateOf(0) }
 

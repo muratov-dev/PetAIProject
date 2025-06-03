@@ -1,55 +1,69 @@
 package me.yeahapps.mypetai.feature.onboarding.ui.screen
 
-import android.net.Uri
+import androidx.activity.compose.BackHandler
+import androidx.activity.compose.LocalActivity
 import androidx.annotation.OptIn
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawWithCache
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.fromHtml
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.net.toUri
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.media3.common.MediaItem
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.exoplayer.source.MediaSource
-import me.yeahapps.mypetai.core.ui.component.button.filled.PetAIPrimaryButton
-import me.yeahapps.mypetai.core.ui.theme.PetAITheme
 import kotlinx.serialization.Serializable
 import me.yeahapps.mypetai.R
-import androidx.core.net.toUri
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.compose.LocalLifecycleOwner
-import androidx.media3.common.util.UnstableApi
-import androidx.media3.ui.AspectRatioFrameLayout
-import androidx.media3.ui.PlayerView
+import me.yeahapps.mypetai.core.ui.component.PetAIDefaultShade
+import me.yeahapps.mypetai.core.ui.component.PetAIVideoPlayer
+import me.yeahapps.mypetai.core.ui.component.button.filled.PetAIPrimaryButton
+import me.yeahapps.mypetai.core.ui.theme.PetAITheme
+import me.yeahapps.mypetai.core.ui.utils.ManagePlayerLifecycle
+import me.yeahapps.mypetai.core.ui.utils.collectFlowWithLifecycle
+import me.yeahapps.mypetai.feature.onboarding.ui.action.OnboardingAction
+import me.yeahapps.mypetai.feature.onboarding.ui.event.OnboardingEvent
+import me.yeahapps.mypetai.feature.onboarding.ui.state.OnboardingState
+import me.yeahapps.mypetai.feature.onboarding.ui.viewmodel.OnboardingViewModel
 
 @Serializable
 object OnboardingScreen
 
 @Composable
-fun OnboardingContainer(modifier: Modifier = Modifier, navigateToSubsOnboarding: () -> Unit) {
+fun OnboardingContainer(
+    modifier: Modifier = Modifier,
+    viewModel: OnboardingViewModel = hiltViewModel(),
+    navigateToSubscriptions: () -> Unit = {}
+) {
     val context = LocalContext.current
-    //TODO Придумать, как правильно передавать ExoPlayer, чтобы не создавать его всегда заново
+    val activity = LocalActivity.current
     val exoPlayer = remember {
         ExoPlayer.Builder(context).build().apply {
             val videoUri = "android.resource://${context.packageName}/${R.raw.onboarding}".toUri()
             val mediaItem = MediaItem.fromUri(videoUri)
-
             setMediaItem(mediaItem)
             repeatMode = ExoPlayer.REPEAT_MODE_ALL
             playWhenReady = true
@@ -57,58 +71,44 @@ fun OnboardingContainer(modifier: Modifier = Modifier, navigateToSubsOnboarding:
         }
     }
 
-    //TODO Вынести в отдельный Composable, чтобы не дублировать код
-    val lifecycleOwner = LocalLifecycleOwner.current
-    DisposableEffect(lifecycleOwner) {
-        val observer = LifecycleEventObserver { _, event ->
-            when (event) {
-                Lifecycle.Event.ON_RESUME -> exoPlayer.play()
-
-                Lifecycle.Event.ON_PAUSE -> exoPlayer.pause()
-                else -> {}
-            }
-        }
-        lifecycleOwner.lifecycle.addObserver(observer)
-        onDispose {
-            lifecycleOwner.lifecycle.removeObserver(observer)
-            exoPlayer.release()
+    val state by viewModel.viewState.collectAsStateWithLifecycle()
+    viewModel.viewActions.collectFlowWithLifecycle(viewModel) { action ->
+        when (action) {
+            OnboardingAction.CloseApp -> activity?.finish()
+            OnboardingAction.NavigateToSubscriptionScreen -> navigateToSubscriptions()
+            null -> {}
         }
     }
 
-    OnboardingContent(modifier = modifier, exoPlayer = exoPlayer, navigateToSubsOnboarding = navigateToSubsOnboarding)
+    ManagePlayerLifecycle(exoPlayer)
+    OnboardingContent(
+        modifier = modifier,
+        exoPlayer = exoPlayer,
+        state = state,
+        onEvent = remember { { event -> viewModel.obtainEvent(event) } })
 }
 
 @OptIn(UnstableApi::class)
 @Composable
-private fun OnboardingContent(modifier: Modifier = Modifier, exoPlayer: ExoPlayer, navigateToSubsOnboarding: () -> Unit) {
-    // TODO Придумать как обрабатывать шаги по другому, вынести логику из ui
-    var step by remember { mutableIntStateOf(0) }
+private fun OnboardingContent(
+    modifier: Modifier = Modifier,
+    exoPlayer: ExoPlayer,
+    state: OnboardingState = OnboardingState(),
+    onEvent: (OnboardingEvent) -> Unit = {}
+) {
+
+    BackHandler {
+        onEvent(OnboardingEvent.ShowPreviousSlide)
+    }
 
     Box(modifier = modifier.navigationBarsPadding(), contentAlignment = Alignment.BottomCenter) {
         Box {
-            //TODO Сделать Composable для ExoPlayer, чтобы не дублировать код
-            AndroidView(modifier = Modifier.fillMaxSize(), factory = { context ->
-                PlayerView(context).apply {
-                    player = exoPlayer
-                    useController = false
-                    resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FILL
-                }
-            })
-            //TODO Вынести отдельно затемнения
-            Box(modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(0.5f)
-                .align(Alignment.BottomCenter)
-                .drawWithCache {
-                    val gradient = Brush.linearGradient(
-                        colorStops = arrayOf(
-                            0.0f to Color.Transparent, 0.22f to Color(0xA6040400), 1.0f to Color(0xFF040400)
-                        ), start = Offset(0f, 0f), end = Offset(0f, size.height)
-                    )
-                    onDrawBehind {
-                        drawRect(brush = gradient)
-                    }
-                })
+            PetAIVideoPlayer(exoPlayer = exoPlayer, modifier = Modifier.fillMaxSize())
+            PetAIDefaultShade(
+                Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(0.5f)
+            )
         }
         Column(modifier = Modifier.fillMaxWidth()) {
             Text(
@@ -118,7 +118,7 @@ private fun OnboardingContent(modifier: Modifier = Modifier, exoPlayer: ExoPlaye
                 modifier = Modifier
                     .padding(horizontal = 24.dp)
                     .fillMaxWidth(),
-                text = when (step) {
+                text = when (state.slideIndex) {
                     0 -> stringResource(R.string.onboarding_title_1)
                     1 -> stringResource(R.string.onboarding_title_2)
                     2 -> stringResource(R.string.onboarding_title_3)
@@ -133,7 +133,7 @@ private fun OnboardingContent(modifier: Modifier = Modifier, exoPlayer: ExoPlaye
                 modifier = Modifier
                     .padding(horizontal = 24.dp)
                     .fillMaxWidth(),
-                text = when (step) {
+                text = when (state.slideIndex) {
                     0 -> stringResource(R.string.onboarding_description_1)
                     1 -> stringResource(R.string.onboarding_description_2)
                     2 -> stringResource(R.string.onboarding_description_3)
@@ -143,12 +143,12 @@ private fun OnboardingContent(modifier: Modifier = Modifier, exoPlayer: ExoPlaye
             Spacer(Modifier.size(24.dp))
             PetAIPrimaryButton(
                 centerContent = stringResource(R.string.common_continue),
-                onClick = { if (step == 1) navigateToSubsOnboarding() else step++ },
+                onClick = { onEvent(OnboardingEvent.ShowNextSlide) },
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
                     .fillMaxWidth()
             )
-            if (step == 1) {
+            if (state.slideIndex == 2) {
                 Spacer(Modifier.size(6.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -171,7 +171,7 @@ private fun OnboardingContent(modifier: Modifier = Modifier, exoPlayer: ExoPlaye
                     }
                 }
             }
-            Spacer(Modifier.size(if (step == 1) 16.dp else 36.dp))
+            Spacer(Modifier.size(if (state.slideIndex == 2) 16.dp else 36.dp))
         }
     }
 }

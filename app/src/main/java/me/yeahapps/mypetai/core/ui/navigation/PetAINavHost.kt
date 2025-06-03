@@ -17,8 +17,8 @@ import me.yeahapps.mypetai.feature.discover.ui.screen.SongInfoContainer
 import me.yeahapps.mypetai.feature.discover.ui.screen.SongInfoScreen
 import me.yeahapps.mypetai.feature.onboarding.ui.screen.OnboardingContainer
 import me.yeahapps.mypetai.feature.onboarding.ui.screen.OnboardingScreen
-import me.yeahapps.mypetai.feature.onboarding.ui.screen.OnboardingSubscriptionContainer
-import me.yeahapps.mypetai.feature.onboarding.ui.screen.OnboardingSubscriptionScreen
+import me.yeahapps.mypetai.feature.onboarding.ui.screen.SubscriptionsContainer
+import me.yeahapps.mypetai.feature.onboarding.ui.screen.SubscriptionsScreen
 import me.yeahapps.mypetai.feature.profile.ui.screen.MyWorksContainer
 import me.yeahapps.mypetai.feature.profile.ui.screen.MyWorksInfoContainer
 import me.yeahapps.mypetai.feature.profile.ui.screen.MyWorksInfoScreen
@@ -32,9 +32,11 @@ fun PetAINavHost(startDestination: Any, navController: NavHostController, modifi
     NavHost(navController = navController, startDestination = startDestination, modifier = modifier) {
         composable<OnboardingScreen> {
             OnboardingContainer(
-                modifier = Modifier.commonModifier(), navigateToSubsOnboarding = {
-                    navController.navigate(RootScreen)
-                })
+                modifier = Modifier.commonModifier(),
+                navigateToSubscriptions = { navController.navigate(SubscriptionsScreen) })
+        }
+        composable<SubscriptionsScreen> {
+            SubscriptionsContainer(modifier = Modifier.commonModifier())
         }
         composable<RootScreen> {
             RootContainer(modifier = Modifier.commonModifier(), parentNavController = navController)
