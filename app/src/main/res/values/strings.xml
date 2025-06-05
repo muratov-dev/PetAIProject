@@ -1,5 +1,6 @@
 <resources>
-    <string name="app_name">Pet AI Project</string>
+    <string name="app_name">My singing pet</string>
+    <string name="app_name_secondary">PETTALK</string>
 
     <!--  Common  -->
     <string name="common_see_all">See All</string>
@@ -20,6 +21,12 @@
 
     <!--  Discover  -->
     <string name="discover_label">Discover</string>
+    <string name="discover_info_title">VocalPet</string>
+    <string name="discover_info_message">Let your pet speak and bring more fun!</string>
+
+    <!--  SongInfo  -->
+    <string name="song_info_upload_button_text">Upload Image</string>
+    <string name="song_info_generate_button_text">Generate</string>
 
     <!--  Create  -->
     <string name="create_label">Create</string>

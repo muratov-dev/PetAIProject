@@ -48,7 +48,7 @@ fun GetProButton(modifier: Modifier = Modifier, onButtonClick: () -> Unit) {
             disabledContainerColor = Color.White,
             disabledContentColor = Color.Black
         ),
-        modifier = Modifier.wrapContentSize()
+        modifier = modifier.wrapContentSize()
     ) {
         Row(
             modifier = Modifier.animateContentSize(tween(300)),

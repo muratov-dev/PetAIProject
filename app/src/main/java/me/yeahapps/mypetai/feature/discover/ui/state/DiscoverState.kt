@@ -4,7 +4,6 @@ import me.yeahapps.mypetai.feature.discover.domain.model.SongCategoryModel
 import me.yeahapps.mypetai.feature.discover.domain.model.SongModel
 
 data class DiscoverState(
-    val isLoading: Boolean = true,
     val songs: List<SongModel> = emptyList(),
     val songCategories: List<SongCategoryModel> = emptyList(),
     val bottomSheetCategories: List<SongCategoryModel> = emptyList(),

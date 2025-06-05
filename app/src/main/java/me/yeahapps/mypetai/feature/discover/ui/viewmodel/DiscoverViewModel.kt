@@ -18,16 +18,16 @@ class DiscoverViewModel @Inject constructor(
     override fun obtainEvent(viewEvent: DiscoverEvent) {
         when (viewEvent) {
             is DiscoverEvent.SelectCategory -> updateViewState { copy(selectedCategory = viewEvent.category) }
-            DiscoverEvent.InitState -> {}
 
             is DiscoverEvent.NavigateToSongInfo -> sendAction(DiscoverAction.NavigateToSongInfo(viewEvent.song))
-
-            is DiscoverEvent.StartSubscription -> {}
             DiscoverEvent.NavigateToCreate -> sendAction(DiscoverAction.NavigateToCreate)
         }
     }
 
     init {
+        viewModelScoped {
+            discoverRepository.saveUser()
+        }
         viewModelScoped {
             discoverRepository.getSongs().collectLatest { songs ->
                 val bottomSheetCategories = songs.flatMap { it.songCategories }.distinct()

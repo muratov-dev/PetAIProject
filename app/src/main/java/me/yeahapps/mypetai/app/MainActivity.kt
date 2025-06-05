@@ -52,7 +52,7 @@ class MainActivity : ComponentActivity() {
             val navController = rememberNavController()
             PetAITheme {
 //                SubscriptionScreen(this)
-                PetAIApp(navController, startDestination = if (isFirstLaunch) OnboardingScreen else RootScreen)
+                PetAIApp(navController, startDestination = if (false) OnboardingScreen else RootScreen)
                 if (!isFirstLaunch) RequestInAppReview(LocalContext.current)
             }
         }

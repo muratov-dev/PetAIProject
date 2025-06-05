@@ -14,5 +14,5 @@ abstract class DiscoverRepositoryModule {
 
     @Singleton
     @Binds
-    abstract fun bindDiaryRepository(repository: DiscoverRepositoryImpl): DiscoverRepository
+    abstract fun bindDiscoverRepository(repository: DiscoverRepositoryImpl): DiscoverRepository
 }

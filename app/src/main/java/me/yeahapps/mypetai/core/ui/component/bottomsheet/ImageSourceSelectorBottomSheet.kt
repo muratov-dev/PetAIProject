@@ -1,15 +1,11 @@
-package me.yeahapps.mypetai.core.ui.component
+package me.yeahapps.mypetai.core.ui.component.bottomsheet
 
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
@@ -17,8 +13,6 @@ import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
@@ -40,19 +34,9 @@ fun ImageSourceSelectorBottomSheet(
     onGallerySourceClick: () -> Unit,
 ) {
     ModalBottomSheet(
-        onDismissRequest = onDismissRequest, sheetState = sheetState,
-        dragHandle = {
-            Canvas(
-                Modifier
-                    .padding(top = 8.dp, bottom = 8.dp)
-                    .width(36.dp)
-                    .height(5.dp)
-                    .clip(RoundedCornerShape(100.dp))
-            ) {
-                drawRect(color = Color(0x667F7F7F))
-                drawRect(color = Color(0x80C2C2C2), blendMode = BlendMode.Multiply)
-            }
-        },
+        onDismissRequest = onDismissRequest,
+        sheetState = sheetState,
+        dragHandle = { PetAIDragHandle() },
         containerColor = Color(0xFF221F03),
     ) {
         Column {

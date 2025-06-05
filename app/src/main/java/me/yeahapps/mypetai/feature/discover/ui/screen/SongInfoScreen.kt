@@ -7,30 +7,23 @@ import android.os.Environment
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia.ImageOnly
 import androidx.annotation.OptIn
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -39,40 +32,38 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.FileProvider
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.media3.common.MediaItem
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.ui.AspectRatioFrameLayout
-import androidx.media3.ui.PlayerView
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import kotlinx.serialization.Serializable
 import me.yeahapps.mypetai.R
+import me.yeahapps.mypetai.core.ui.component.PetAIVideoPlayer
+import me.yeahapps.mypetai.core.ui.component.bottomsheet.ImageSourceSelectorBottomSheet
 import me.yeahapps.mypetai.core.ui.component.button.filled.PetAIButtonDefaults
 import me.yeahapps.mypetai.core.ui.component.button.filled.PetAIPrimaryButton
-import me.yeahapps.mypetai.core.ui.component.button.filled.PetAISecondaryButton
 import me.yeahapps.mypetai.core.ui.component.button.filled.PetAITertiaryButton
 import me.yeahapps.mypetai.core.ui.component.button.icon.PetAIIconButton
 import me.yeahapps.mypetai.core.ui.component.button.icon.PetAIIconButtonDefaults
 import me.yeahapps.mypetai.core.ui.component.topbar.PetAITopAppBar
 import me.yeahapps.mypetai.core.ui.component.topbar.PetAITopBarTitleText
 import me.yeahapps.mypetai.core.ui.theme.PetAITheme
+import me.yeahapps.mypetai.core.ui.utils.ManagePlayerLifecycle
+import me.yeahapps.mypetai.core.ui.utils.collectFlowWithLifecycle
 import me.yeahapps.mypetai.feature.discover.domain.model.SongModel
+import me.yeahapps.mypetai.feature.discover.ui.action.SongInfoAction
 import me.yeahapps.mypetai.feature.discover.ui.event.SongInfoEvent
 import me.yeahapps.mypetai.feature.discover.ui.state.SongInfoState
 import me.yeahapps.mypetai.feature.discover.ui.viewmodel.SongInfoViewModel
@@ -91,6 +82,17 @@ fun SongInfoContainer(
 ) {
     val state by viewModel.viewState.collectAsStateWithLifecycle()
 
+    viewModel.viewActions.collectFlowWithLifecycle(viewModel) { action ->
+        when (action) {
+            SongInfoAction.NavigateUp -> navigateUp()
+            is SongInfoAction.NavigateToVideoProcessing -> {
+                navigateToProcessing(action.songName, action.imageUri, action.audioUrl)
+            }
+
+            null -> {}
+        }
+    }
+
     val context = LocalContext.current
     val exoPlayer = remember {
         ExoPlayer.Builder(context).build().apply {
@@ -103,31 +105,13 @@ fun SongInfoContainer(
         }
     }
 
-    val lifecycleOwner = LocalLifecycleOwner.current
-    DisposableEffect(lifecycleOwner) {
-        val observer = LifecycleEventObserver { _, event ->
-            when (event) {
-                Lifecycle.Event.ON_RESUME -> exoPlayer.play()
 
-                Lifecycle.Event.ON_PAUSE -> exoPlayer.pause()
-                else -> {}
-            }
-        }
-        lifecycleOwner.lifecycle.addObserver(observer)
-        onDispose {
-            lifecycleOwner.lifecycle.removeObserver(observer)
-            exoPlayer.release()
-        }
-    }
-
+    ManagePlayerLifecycle(exoPlayer)
     SongInfoContent(
         modifier = modifier.systemBarsPadding(),
         exoPlayer = exoPlayer,
         state = state,
-        //TODO Сделать навигацию через ивенты
         onEvent = remember { { event -> viewModel.obtainEvent(event) } },
-        navigateToProcessing = navigateToProcessing,
-        navigateUp = navigateUp
     )
 }
 
@@ -139,8 +123,6 @@ private fun SongInfoContent(
     exoPlayer: ExoPlayer,
     state: SongInfoState = SongInfoState(),
     onEvent: (SongInfoEvent) -> Unit = {},
-    navigateToProcessing: (String, String, String) -> Unit,
-    navigateUp: () -> Unit
 ) {
     val context = LocalContext.current
     val sheetState = rememberModalBottomSheetState()
@@ -168,11 +150,7 @@ private fun SongInfoContent(
 
     val cameraPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(), onResult = { isGranted ->
-            if (isGranted) {
-                cameraLauncher.launch(photoUri)
-            } else {
-                // Пользователь отказал
-            }
+            if (isGranted) cameraLauncher.launch(photoUri)
         })
 
 
@@ -183,8 +161,7 @@ private fun SongInfoContent(
             PetAIIconButton(
                 icon = R.drawable.ic_arrow_left,
                 colors = PetAIIconButtonDefaults.colors(containerColor = Color.Transparent),
-                onClick = navigateUp
-            )
+                onClick = { onEvent(SongInfoEvent.NavigateUp) })
         })
     }) { innerPadding ->
         Column(modifier = Modifier.padding(top = innerPadding.calculateTopPadding(), start = 16.dp, end = 16.dp)) {
@@ -194,13 +171,7 @@ private fun SongInfoContent(
                     .aspectRatio(1f / 1.39f, true)
                     .clip(RoundedCornerShape(32.dp))
             ) {
-                AndroidView(modifier = Modifier.matchParentSize(), factory = { context ->
-                    PlayerView(context).apply {
-                        player = exoPlayer
-                        useController = false
-                        resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FILL
-                    }
-                })
+                PetAIVideoPlayer(exoPlayer = exoPlayer, modifier = Modifier.matchParentSize())
                 PetAIIconButton(
                     icon = if (isMuted) R.drawable.ic_music_off else R.drawable.ic_music,
                     colors = PetAIIconButtonDefaults.colors(
@@ -225,9 +196,7 @@ private fun SongInfoContent(
             Spacer(Modifier.size(16.dp))
             PetAITertiaryButton(centerContent = {
                 if (uria != null) {
-                    val painter = rememberAsyncImagePainter(
-                        ImageRequest.Builder(context).data(uria).build()
-                    )
+                    val painter = rememberAsyncImagePainter(ImageRequest.Builder(context).data(uria).build())
 
                     Image(
                         painter = painter,
@@ -237,20 +206,23 @@ private fun SongInfoContent(
                             .size(48.dp)
                             .clip(RoundedCornerShape(4.dp))
                     )
-                } else {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.ic_gallery), contentDescription = null
-                    )
-                }
-                //TODO Вынести в ресурсы
-                Text(text = "Upload Image", style = PetAITheme.typography.buttonTextDefault.copy(fontSize = 18.sp))
+                } else Icon(imageVector = ImageVector.vectorResource(R.drawable.ic_gallery), contentDescription = null)
+
+                Text(
+                    text = stringResource(R.string.song_info_upload_button_text),
+                    style = PetAITheme.typography.buttonTextDefault.copy(fontSize = 18.sp)
+                )
             }, onClick = { avatarSourceSelectionVisible = true }, modifier = Modifier.fillMaxWidth())
             Spacer(Modifier.size(16.dp))
             PetAIPrimaryButton(
-                centerContent = "Generate",
+                centerContent = stringResource(R.string.song_info_generate_button_text),
                 enabled = uria != null,
                 colors = PetAIButtonDefaults.colors(contentColor = PetAITheme.colors.buttonTextPrimary),
-                onClick = { state.songInfo?.let { navigateToProcessing(it.name, uria.toString(), it.url) } },
+                onClick = {
+                    state.songInfo?.let {
+                        onEvent(SongInfoEvent.GenerateVideo(it.name, uria.toString(), it.url))
+                    }
+                },
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(Modifier.size(24.dp))
@@ -259,72 +231,11 @@ private fun SongInfoContent(
 
     //TODO Вынести в общий компонент
     if (avatarSourceSelectionVisible) {
-        ModalBottomSheet(
-            onDismissRequest = { avatarSourceSelectionVisible = false }, sheetState = sheetState,
-            dragHandle = {
-                Canvas(
-                    Modifier
-                        .padding(top = 8.dp, bottom = 8.dp)
-                        .width(36.dp)
-                        .height(5.dp)
-                        .clip(RoundedCornerShape(100.dp))
-                ) {
-                    drawRect(color = Color(0x667F7F7F))
-                    drawRect(color = Color(0x80C2C2C2), blendMode = BlendMode.Multiply)
-                }
-            },
-            containerColor = Color(0xFF221F03),
-        ) {
-            Column {
-                Row(
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp)
-                        .fillMaxWidth()
-                ) {
-                    Text(
-                        text = "Upload from",
-                        style = PetAITheme.typography.buttonTextDefault,
-                        color = PetAITheme.colors.buttonTextSecondary,
-                        modifier = Modifier.weight(1f)
-                    )
-                    PetAIIconButton(
-                        icon = R.drawable.ic_close,
-                        colors = PetAIIconButtonDefaults.colors(containerColor = Color.Transparent),
-                        onClick = { avatarSourceSelectionVisible = false })
-                }
-                Spacer(Modifier.size(24.dp))
-                PetAISecondaryButton(
-                    text = "Gallery",
-                    colors = PetAIButtonDefaults.colors(
-                        containerColor = PetAITheme.colors.buttonSecondaryDefault,
-                        contentColor = PetAITheme.colors.buttonTextSecondary,
-                    ),
-                    startContent = {
-                        Icon(imageVector = ImageVector.vectorResource(R.drawable.ic_gallery), contentDescription = null)
-                    },
-                    onClick = { pickMedia.launch(PickVisualMediaRequest(ImageOnly)) },
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp)
-                        .fillMaxWidth()
-                )
-                Spacer(Modifier.size(16.dp))
-                PetAISecondaryButton(
-                    text = "Camera",
-                    startContent = {
-                        Icon(imageVector = ImageVector.vectorResource(R.drawable.ic_camera), contentDescription = null)
-                    },
-                    colors = PetAIButtonDefaults.colors(
-                        containerColor = PetAITheme.colors.buttonSecondaryDefault,
-                        contentColor = PetAITheme.colors.buttonTextSecondary,
-                    ),
-                    onClick = { cameraPermissionLauncher.launch(Manifest.permission.CAMERA) },
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp)
-                        .fillMaxWidth()
-                )
-                Spacer(Modifier.size(32.dp))
-            }
-        }
+        ImageSourceSelectorBottomSheet(
+            sheetState = sheetState,
+            onDismissRequest = { avatarSourceSelectionVisible = false },
+            onCameraSourceClick = { cameraPermissionLauncher.launch(Manifest.permission.CAMERA) },
+            onGallerySourceClick = { pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)) })
     }
 }
 

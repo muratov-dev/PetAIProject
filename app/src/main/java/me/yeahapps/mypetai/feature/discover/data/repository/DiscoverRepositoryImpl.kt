@@ -37,17 +37,6 @@ class DiscoverRepositoryImpl @Inject constructor(
     private val preferences: SharedPreferences
 ) : DiscoverRepository {
 
-    override suspend fun saveUser() {
-        val savedUserId = preferences.getString("userId", null)
-        if (savedUserId != null) return
-        val userId = UUID.randomUUID().toString().uppercase()
-        apiService.saveUserId(SaveUserRequestDto(userId = userId))
-        preferences.edit {
-            putString("userId", userId)
-            putBoolean("isFirstLaunch", false)
-        }
-    }
-
     init {
         coroutineScope.launch {
             val json = readJSONFromAssets(context, "petContent.json")
@@ -59,7 +48,6 @@ class DiscoverRepositoryImpl @Inject constructor(
                 }
             }
 
-            // 2. Распаковываем архив во временную директорию
             val cacheDir = context.cacheDir
             val videos = unzipToCache(zipFile, cacheDir)
             val videosMap = videos.associateBy { it.name }
@@ -80,11 +68,22 @@ class DiscoverRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getSongs(): Flow<List<SongModel>> {
+    override suspend fun saveUser() {
+        val savedUserId = preferences.getString("userId", null)
+        if (savedUserId != null) return
+        val userId = UUID.randomUUID().toString().uppercase()
+        apiService.saveUserId(SaveUserRequestDto(userId = userId))
+        preferences.edit {
+            putString("userId", userId)
+            putBoolean("isFirstLaunch", false)
+        }
+    }
+
+    override fun getSongs(): Flow<List<SongModel>> {
         return discoverDao.getSongs().map { songs -> songs.map { it.toDomain() } }
     }
 
-    override suspend fun getSongCategories(): Flow<List<SongCategoryModel>> {
+    override fun getSongCategories(): Flow<List<SongCategoryModel>> {
         return discoverDao.getCategories().map { categories ->
             categories.map { it.toDomain() }
         }

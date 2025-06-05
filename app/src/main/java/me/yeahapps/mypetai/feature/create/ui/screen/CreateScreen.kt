@@ -55,7 +55,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import me.yeahapps.mypetai.R
-import me.yeahapps.mypetai.core.ui.component.ImageSourceSelectorBottomSheet
+import me.yeahapps.mypetai.core.ui.component.bottomsheet.ImageSourceSelectorBottomSheet
 import me.yeahapps.mypetai.core.ui.component.button.filled.PetAIPrimaryButton
 import me.yeahapps.mypetai.core.ui.component.topbar.PetAISecondaryTopAppBar
 import me.yeahapps.mypetai.core.ui.theme.PetAITheme

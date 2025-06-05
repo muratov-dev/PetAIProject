@@ -17,8 +17,8 @@ import me.yeahapps.mypetai.feature.discover.ui.screen.SongInfoContainer
 import me.yeahapps.mypetai.feature.discover.ui.screen.SongInfoScreen
 import me.yeahapps.mypetai.feature.onboarding.ui.screen.OnboardingContainer
 import me.yeahapps.mypetai.feature.onboarding.ui.screen.OnboardingScreen
-import me.yeahapps.mypetai.feature.onboarding.ui.screen.SubscriptionsContainer
-import me.yeahapps.mypetai.feature.onboarding.ui.screen.SubscriptionsScreen
+import me.yeahapps.mypetai.feature.subscriptions.ui.screen.SubscriptionsContainer
+import me.yeahapps.mypetai.feature.subscriptions.ui.screen.SubscriptionsScreen
 import me.yeahapps.mypetai.feature.profile.ui.screen.MyWorksContainer
 import me.yeahapps.mypetai.feature.profile.ui.screen.MyWorksInfoContainer
 import me.yeahapps.mypetai.feature.profile.ui.screen.MyWorksInfoScreen

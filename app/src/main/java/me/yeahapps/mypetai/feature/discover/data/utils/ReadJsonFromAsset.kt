@@ -4,7 +4,7 @@ import android.content.Context
 import java.io.BufferedReader
 import java.io.InputStreamReader
 
-suspend fun readJSONFromAssets(context: Context, path: String): String {
+fun readJSONFromAssets(context: Context, path: String): String {
     return try {
         val file = context.assets.open(path)
         val bufferedReader = BufferedReader(InputStreamReader(file))

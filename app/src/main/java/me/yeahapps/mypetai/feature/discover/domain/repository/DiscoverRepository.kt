@@ -7,6 +7,6 @@ import me.yeahapps.mypetai.feature.discover.domain.model.SongModel
 interface DiscoverRepository {
 
     suspend fun saveUser()
-    suspend fun getSongs(): Flow<List<SongModel>>
-    suspend fun getSongCategories(): Flow<List<SongCategoryModel>>
+    fun getSongs(): Flow<List<SongModel>>
+    fun getSongCategories(): Flow<List<SongCategoryModel>>
 }

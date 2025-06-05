@@ -1,8 +1,13 @@
 package me.yeahapps.mypetai.feature.discover.ui.component
 
-import me.yeahapps.mypetai.R
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
@@ -11,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import me.yeahapps.mypetai.R
 import me.yeahapps.mypetai.core.ui.theme.PetAITheme
 import me.yeahapps.mypetai.feature.discover.domain.model.SongCategoryModel
 import me.yeahapps.mypetai.feature.discover.domain.model.SongModel
@@ -25,7 +31,9 @@ fun CategoryItem(
 ) {
     Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(20.dp)) {
         Row(
-            modifier = Modifier.padding(16.dp).fillMaxWidth(),
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -49,6 +57,38 @@ fun CategoryItem(
             }
             items(songs, key = { it.id }) { song ->
                 SongCard(song = song, onSongClick = onSongClick)
+            }
+            item {
+                Spacer(Modifier.size(8.dp))
+            }
+        }
+    }
+}
+
+@Composable
+fun CategoryItemPlaceholder(modifier: Modifier = Modifier) {
+    Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(20.dp)) {
+        Row(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "Loading...",
+                style = PetAITheme.typography.headlineSemiBold,
+                color = PetAITheme.colors.textPrimary,
+                modifier = Modifier.weight(1f)
+            )
+        }
+
+        LazyRow(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            item {
+                Spacer(Modifier.size(8.dp))
+            }
+            items(3) {
+                SongCardPlaceholder()
             }
             item {
                 Spacer(Modifier.size(8.dp))

@@ -25,10 +25,11 @@ class BillingManager @Inject constructor(
     @ApplicationContext private val context: Context, @ApplicationCoroutineScope private val scope: CoroutineScope
 ) : PurchasesUpdatedListener {
 
-    private val billingClient = BillingClient.newBuilder(context).setListener(this).build()
+    private val billingClient = BillingClient.newBuilder(context).enablePendingPurchases().setListener(this).build()
 
     private val _availableSubscriptions = MutableStateFlow<List<ProductDetails>>(emptyList())
-    val availableSubscriptions: StateFlow<List<ProductDetails>> = _availableSubscriptions
+    val availableSubscriptions: StateFlow<List<ProductDetails>>
+        get() = _availableSubscriptions
 
     private val _isSubscribed = MutableStateFlow(false)
     val isSubscribed: StateFlow<Boolean> = _isSubscribed
