@@ -1,5 +1,6 @@
-package me.yeahapps.mypetai.feature.subscriptions.ui.screen
+package me.yeahapps.mypetai.feature.subscription.ui.screen
 
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -35,16 +36,18 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.android.billingclient.api.ProductDetails
 import kotlinx.serialization.Serializable
 import me.yeahapps.mypetai.R
 import me.yeahapps.mypetai.core.ui.component.button.filled.PetAIPrimaryButton
 import me.yeahapps.mypetai.core.ui.component.button.icon.PetAIIconButton
 import me.yeahapps.mypetai.core.ui.component.button.icon.PetAIIconButtonDefaults
 import me.yeahapps.mypetai.core.ui.theme.PetAITheme
-import me.yeahapps.mypetai.feature.subscriptions.ui.component.SubscriptionItem
-import me.yeahapps.mypetai.feature.subscriptions.ui.event.SubscriptionsEvent
-import me.yeahapps.mypetai.feature.subscriptions.ui.state.SubscriptionsState
-import me.yeahapps.mypetai.feature.subscriptions.ui.viewmodel.SubscriptionsViewModel
+import me.yeahapps.mypetai.feature.subscription.ui.component.SubscriptionItem
+import me.yeahapps.mypetai.feature.subscription.ui.event.SubscriptionsEvent
+import me.yeahapps.mypetai.feature.subscription.ui.state.SubscriptionsState
+import me.yeahapps.mypetai.feature.subscription.ui.viewmodel.SubscriptionsViewModel
+import kotlin.math.roundToInt
 
 @Serializable
 object SubscriptionsScreen
@@ -62,7 +65,7 @@ private fun SubscriptionsContent(
     state: SubscriptionsState = SubscriptionsState(),
     onEvent: (SubscriptionsEvent) -> Unit = {}
 ) {
-
+    val activity = LocalActivity.current
     Box(modifier = modifier.navigationBarsPadding()) {
         Box(
             modifier = Modifier
@@ -93,43 +96,43 @@ private fun SubscriptionsContent(
         }
         Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Bottom)) {
             CompositionLocalProvider(LocalContentColor provides PetAITheme.colors.textPrimary) {
-                state.subscriptionsList.forEach { details ->
+                state.subscriptionsList.forEach { product ->
+                    val offer = product.subscriptionOfferDetails?.firstOrNull() ?: return@forEach
+                    val pricePerWeek = getWeeklyPrice(product)
+                    val fullPrice = offer.pricingPhases.pricingPhaseList.firstOrNull()?.formattedPrice ?: "-"
+                    val title = if (getWeeks(product) > 1) "Yearly Access" else "Weekly Access"
+                    val subtitle = if (getWeeks(product) > 1) "Just $fullPrice per year" else "Cancel Anytime"
+
+                    val discount = if (state.subscriptionsList.size == 2 && getWeeks(product) > 1) {
+                        val weekly = state.subscriptionsList.firstOrNull { getWeeks(it) == 1 }
+                        weekly?.let { calculateDiscountPercent(product, it) }
+                    } else null
+
                     SubscriptionItem(
-                        details.details,
-                        isSelected = details.isSelected,
-                        modifier = Modifier
-                            .padding(horizontal = 16.dp)
-                            .fillMaxWidth()
-                    )
-                }
-                Spacer(Modifier.size(8.dp))
-                Row(
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp)
-                        .fillMaxWidth()
-                        .padding(horizontal = 24.dp, vertical = 12.dp)
-                ) {
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(text = "Yearly Access")
-                        Text(text = "Just $49.99 per year")
-                    }
-                    Text(text = "89 % OFF", modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp))
-                    Column() {
-                        Text(text = "$0.96", textAlign = TextAlign.End)
-                        Text(text = "per week", textAlign = TextAlign.End)
-                    }
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        title = title,
+                        subtitle = subtitle,
+                        weeklyPrice = pricePerWeek,
+                        discountPercent = discount,
+                        selected = state.selectedDetails == product,
+                        onClick = { onEvent(SubscriptionsEvent.SelectSubscription(product)) })
                 }
             }
             Spacer(Modifier.size(24.dp))
             Text(
-                text = "auto-renewal, cancel anytime",
+                text = "Non commitment - cancel anytime",
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth(),
                 color = PetAITheme.colors.textPrimary.copy(alpha = 0.5f),
                 style = PetAITheme.typography.buttonTextRegular
             )
             Spacer(Modifier.size(16.dp))
             PetAIPrimaryButton(
                 centerContent = stringResource(R.string.common_continue),
-                onClick = { },
+                enabled = state.selectedDetails != null,
+                onClick = {
+                    activity?.let { onEvent(SubscriptionsEvent.LaunchPurchaseFlow(it, state.selectedDetails!!)) }
+                },
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
                     .fillMaxWidth()
@@ -168,5 +171,54 @@ private fun SubscriptionsContent(
                 contentColor = PetAITheme.colors.buttonTextPrimary
             )
         )
+    }
+}
+
+fun getWeeklyPrice(product: ProductDetails): String {
+    val offer = product.subscriptionOfferDetails?.firstOrNull() ?: return "-"
+    val pricingPhase = offer.pricingPhases.pricingPhaseList.firstOrNull() ?: return "-"
+    val micros = pricingPhase.priceAmountMicros
+    val price = micros / 1_000_000.0
+    val billingPeriod = pricingPhase.billingPeriod // e.g., "P1Y"
+
+    val weeks = when {
+        billingPeriod.contains("Y") -> 52
+        billingPeriod.contains("M") -> 4
+        billingPeriod.contains("W") -> 1
+        else -> 1
+    }
+
+    val weekly = price / weeks
+    return String.format("%.2f", weekly)
+}
+
+fun calculateDiscountPercent(base: ProductDetails, compared: ProductDetails): Int {
+    val basePrice = extractMicros(base).toDouble()
+    val weeksBase = getWeeks(base)
+    val weeklyBase = basePrice / weeksBase
+
+    val comparedPrice = extractMicros(compared).toDouble()
+    val weeksCompared = getWeeks(compared)
+    val weeklyCompared = comparedPrice / weeksCompared
+
+    val discount = ((weeklyCompared - weeklyBase) / weeklyCompared) * 100
+    return discount.roundToInt()
+}
+
+fun extractMicros(product: ProductDetails): Long {
+    return product.subscriptionOfferDetails?.firstOrNull()?.pricingPhases?.pricingPhaseList?.firstOrNull()?.priceAmountMicros
+        ?: 0
+}
+
+fun getWeeks(product: ProductDetails): Int {
+    val period =
+        product.subscriptionOfferDetails?.firstOrNull()?.pricingPhases?.pricingPhaseList?.firstOrNull()?.billingPeriod
+            ?: "P1W"
+
+    return when {
+        period.contains("Y") -> 52
+        period.contains("M") -> 4
+        period.contains("W") -> 1
+        else -> 1
     }
 }

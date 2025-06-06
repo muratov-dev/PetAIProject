@@ -1,4 +1,4 @@
-package me.yeahapps.mypetai.feature.discover.ui.component
+package me.yeahapps.mypetai.core.ui.component
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -24,21 +24,45 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import me.yeahapps.mypetai.R
-import me.yeahapps.mypetai.core.ui.component.PetAIAsyncImage
 import me.yeahapps.mypetai.core.ui.theme.PetAITheme
 import me.yeahapps.mypetai.core.ui.utils.modifier.shimmerOnContentLoadingAnimation
 import me.yeahapps.mypetai.feature.discover.domain.model.SongModel
+import me.yeahapps.mypetai.feature.profile.domain.model.MyWorkModel
 import kotlin.random.Random
 
 @Composable
-fun SongCard(modifier: Modifier = Modifier, song: SongModel, onSongClick: (SongModel) -> Unit = {}) {
+fun SongCard(
+    song: MyWorkModel, modifier: Modifier = Modifier, onSongClick: (MyWorkModel) -> Unit = {}
+) {
+    val listensCount = Random.nextInt(10, 900)
+    SongCardContent(
+        SongContentModel(song.imageUrl, song.title, listensCount),
+        modifier = modifier,
+        onSongClick = { onSongClick(song) })
+}
+
+@Composable
+fun SongCard(
+    song: SongModel, modifier: Modifier = Modifier, onSongClick: (SongModel) -> Unit = {}
+) {
+    val listensCount = Random.nextInt(10, 900)
+    SongCardContent(
+        SongContentModel(song.video.imageUrl, song.name, listensCount),
+        modifier = modifier,
+        onSongClick = { onSongClick(song) })
+}
+
+@Composable
+private fun SongCardContent(
+    song: SongContentModel, modifier: Modifier = Modifier, onSongClick: () -> Unit = {}
+) {
     Box(
         modifier = modifier
             .size(width = 168.dp, height = 208.dp)
-            .clickable(onClick = { onSongClick(song) })
+            .clickable(onClick = { onSongClick() })
             .clip(RoundedCornerShape(32.dp))
     ) {
-        PetAIAsyncImage(modifier = Modifier.matchParentSize(), data = song.video.imageUrl)
+        PetAIAsyncImage(modifier = Modifier.matchParentSize(), data = song.imageUrl)
         Canvas(
             modifier = Modifier
                 .fillMaxWidth()
@@ -46,28 +70,30 @@ fun SongCard(modifier: Modifier = Modifier, song: SongModel, onSongClick: (SongM
                 .align(Alignment.BottomCenter), onDraw = {
                 drawRect(Brush.verticalGradient(listOf(Color.Transparent, Color(0xCC040401))))
             })
-        Row(
-            modifier = Modifier
-                .padding(16.dp)
-                .wrapContentSize()
-                .background(
-                    color = PetAITheme.colors.backgroundPrimary.copy(alpha = 0.5f), shape = RoundedCornerShape(25.dp)
+        if (song.listensCount > 0) {
+            Row(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .wrapContentSize()
+                    .background(
+                        color = PetAITheme.colors.backgroundPrimary.copy(alpha = 0.5f),
+                        shape = RoundedCornerShape(25.dp)
+                    )
+                    .padding(5.dp)
+            ) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_music),
+                    contentDescription = null,
+                    tint = PetAITheme.colors.textPrimary,
+                    modifier = Modifier.size(14.dp)
                 )
-                .padding(5.dp)
-        ) {
-            Icon(
-                imageVector = ImageVector.vectorResource(R.drawable.ic_music),
-                contentDescription = null,
-                tint = PetAITheme.colors.textPrimary,
-                modifier = Modifier.size(14.dp)
-            )
-            Spacer(Modifier.size(1.dp))
-            val listensCount = Random.nextInt(10, 900)
-            Text(
-                text = "${listensCount}k",
-                style = PetAITheme.typography.labelMedium,
-                color = PetAITheme.colors.textPrimary
-            )
+                Spacer(Modifier.size(1.dp))
+                Text(
+                    text = "${song.listensCount}k",
+                    style = PetAITheme.typography.labelMedium,
+                    color = PetAITheme.colors.textPrimary
+                )
+            }
         }
 
         Text(
@@ -90,3 +116,8 @@ fun SongCardPlaceholder(modifier: Modifier = Modifier) {
             .shimmerOnContentLoadingAnimation()
     )
 }
+
+
+data class SongContentModel(
+    val imageUrl: String, val name: String, val listensCount: Int = 0
+)

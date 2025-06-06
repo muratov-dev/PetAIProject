@@ -19,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import me.yeahapps.mypetai.core.ui.component.SongCard
 import me.yeahapps.mypetai.core.ui.component.bottomsheet.PetAIDragHandle
 import me.yeahapps.mypetai.feature.discover.domain.model.SongCategoryModel
 import me.yeahapps.mypetai.feature.discover.domain.model.SongModel
@@ -32,7 +33,8 @@ fun DiscoverAllSongsBottomSheet(
     categories: List<SongCategoryModel> = emptyList(),
     songs: List<SongModel> = emptyList(),
     onDismissRequest: () -> Unit = {},
-    onCategorySelect: (SongCategoryModel?) -> Unit = {}
+    onCategorySelect: (SongCategoryModel?) -> Unit = {},
+    onSongClick: (SongModel) -> Unit = {}
 ) {
     val lazyGridState = rememberLazyGridState()
 
@@ -72,7 +74,7 @@ fun DiscoverAllSongsBottomSheet(
                     if (selectedCategory == null) songs
                     else songs.filter { it.songCategories.contains(selectedCategory.name) },
                 ) {
-                    SongCard(song = it)
+                    SongCard(song = it, onSongClick = { onSongClick(it) })
                 }
             }
         }

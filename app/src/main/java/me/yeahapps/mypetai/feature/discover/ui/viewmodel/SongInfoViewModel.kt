@@ -24,10 +24,8 @@ class SongInfoViewModel @Inject constructor(
 
     override fun obtainEvent(viewEvent: SongInfoEvent) {
         when (viewEvent) {
-            SongInfoEvent.MuteVideo -> sendAction(SongInfoAction.MuteVideo)
-            SongInfoEvent.UnmuteVideo -> sendAction(SongInfoAction.UnmuteVideo)
             SongInfoEvent.NavigateUp -> sendAction(SongInfoAction.NavigateUp)
-            SongInfoEvent.GenerateVideo -> generateVideo()
+            is SongInfoEvent.GenerateVideo -> generateVideo()
         }
     }
 

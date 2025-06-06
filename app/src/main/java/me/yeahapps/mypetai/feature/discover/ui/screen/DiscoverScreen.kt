@@ -213,7 +213,8 @@ private fun DiscoverContent(
                 categories = state.bottomSheetCategories,
                 songs = state.songs,
                 onDismissRequest = { showBottomSheet = false },
-                onCategorySelect = { onEvent(DiscoverEvent.SelectCategory(it)) })
+                onCategorySelect = { onEvent(DiscoverEvent.SelectCategory(it)) },
+                onSongClick = { onEvent(DiscoverEvent.NavigateToSongInfo(it)) })
         }
     }
 }

@@ -17,6 +17,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import me.yeahapps.mypetai.R
+import me.yeahapps.mypetai.core.ui.component.SongCard
+import me.yeahapps.mypetai.core.ui.component.SongCardPlaceholder
 import me.yeahapps.mypetai.core.ui.theme.PetAITheme
 import me.yeahapps.mypetai.feature.discover.domain.model.SongCategoryModel
 import me.yeahapps.mypetai.feature.discover.domain.model.SongModel
@@ -56,7 +58,7 @@ fun CategoryItem(
                 Spacer(Modifier.size(8.dp))
             }
             items(songs, key = { it.id }) { song ->
-                SongCard(song = song, onSongClick = onSongClick)
+                SongCard(song = song, onSongClick = { onSongClick(song) })
             }
             item {
                 Spacer(Modifier.size(8.dp))
