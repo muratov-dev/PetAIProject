@@ -1,5 +1,6 @@
 package me.yeahapps.mypetai.feature.subscription.ui.screen
 
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -41,7 +42,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.android.billingclient.api.ProductDetails
-import kotlinx.serialization.Serializable
 import me.yeahapps.mypetai.R
 import me.yeahapps.mypetai.core.ui.component.button.filled.PetAIPrimaryButton
 import me.yeahapps.mypetai.core.ui.component.button.icon.PetAIIconButton
@@ -57,10 +57,11 @@ import kotlin.math.roundToInt
 
 @Composable
 fun SubscriptionsContainer(
-    modifier: Modifier = Modifier,
-    viewModel: SubscriptionsViewModel = hiltViewModel(),
-    onScreenClose: () -> Unit
+    modifier: Modifier = Modifier, viewModel: SubscriptionsViewModel = hiltViewModel(), onScreenClose: () -> Unit
 ) {
+
+    BackHandler { onScreenClose() }
+
     val state by viewModel.viewState.collectAsStateWithLifecycle()
     viewModel.viewActions.collectFlowWithLifecycle(viewModel) { action ->
         when (action) {
@@ -266,8 +267,7 @@ private fun SubscriptionsContent(
                 containerColor = PetAITheme.colors.buttonSecondaryDefault,
                 contentColor = PetAITheme.colors.buttonTextPrimary
             ),
-            onClick = { onEvent(SubscriptionsEvent.CloseScreen) }
-        )
+            onClick = { onEvent(SubscriptionsEvent.CloseScreen) })
     }
 }
 

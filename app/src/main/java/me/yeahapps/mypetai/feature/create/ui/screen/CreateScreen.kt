@@ -199,13 +199,15 @@ private fun CreateContent(
 
     Column(modifier = modifier.padding(horizontal = 16.dp)) {
         PetAISecondaryTopAppBar(title = { Text(text = stringResource(R.string.create_label)) }, endAction = {
-            GetProButton(
-                modifier = Modifier
-                    .wrapContentSize()
-                    .systemBarsPadding()
-            ) {
-                if (isButtonExpanded) onEvent(CreateEvent.NavigateToSubscriptions)
-                else isButtonExpanded = true
+            if(!state.hasSubscription){
+                GetProButton(
+                    modifier = Modifier
+                        .wrapContentSize()
+                        .systemBarsPadding()
+                ) {
+                    if (isButtonExpanded) onEvent(CreateEvent.NavigateToSubscriptions)
+                    else isButtonExpanded = true
+                }
             }
         })
         Spacer(Modifier.size(20.dp))

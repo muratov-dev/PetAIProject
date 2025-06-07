@@ -54,7 +54,7 @@ private fun RootContent(
     } ?: 0
 
 
-    var isSubscriptionsScreenVisible by remember { mutableStateOf(false) }
+    var isSubscriptionsScreenVisible by remember { mutableStateOf(isFirstLaunch) }
     LaunchedEffect(Unit) {
         if (isFirstLaunch) {
             isSubscriptionsScreenVisible = true

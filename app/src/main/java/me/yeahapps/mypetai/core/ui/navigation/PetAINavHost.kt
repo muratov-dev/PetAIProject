@@ -26,15 +26,18 @@ import me.yeahapps.mypetai.feature.root.ui.screen.RootScreen
 import kotlin.reflect.typeOf
 
 @Composable
-fun PetAINavHost(startDestination: Any, navController: NavHostController, modifier: Modifier = Modifier) {
+fun PetAINavHost(
+    startDestination: Any, navController: NavHostController, isFirstLaunch: Boolean, modifier: Modifier = Modifier
+) {
     NavHost(navController = navController, startDestination = startDestination, modifier = modifier) {
         composable<OnboardingScreen> {
             OnboardingContainer(
-                modifier = Modifier.commonModifier(),
-                navigateToSubscriptions = { navController.navigate(RootScreen) })
+                modifier = Modifier.commonModifier(), navigateToSubscriptions = { navController.navigate(RootScreen) })
         }
         composable<RootScreen> {
-            RootContainer(modifier = Modifier.commonModifier(), parentNavController = navController)
+            RootContainer(
+                modifier = Modifier.commonModifier(), parentNavController = navController, isFirstLaunch = isFirstLaunch
+            )
         }
 
         composable<AudioRecordScreen> {

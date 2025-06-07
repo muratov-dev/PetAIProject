@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
@@ -186,13 +187,13 @@ private fun DiscoverContent(
                 style = PetAITheme.typography.titleBlack,
                 modifier = Modifier
                     .wrapContentHeight(Alignment.CenterVertically)
-                    .systemBarsPadding()
+                    .statusBarsPadding()
             )
         }, endAction = {
             GetProButton(
                 modifier = Modifier
                     .wrapContentSize()
-                    .systemBarsPadding()
+                    .statusBarsPadding()
             ) {
                 if (isButtonExpanded) onEvent(DiscoverEvent.NavigateToSubscriptions)
                 else isButtonExpanded = true

@@ -2,19 +2,19 @@ package me.yeahapps.mypetai.feature.discover.ui.viewmodel
 
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
+import me.yeahapps.mypetai.core.data.BillingManager
 import me.yeahapps.mypetai.core.ui.viewmodel.BaseViewModel
 import me.yeahapps.mypetai.feature.discover.domain.model.SongCategoryModel
 import me.yeahapps.mypetai.feature.discover.domain.repository.DiscoverRepository
 import me.yeahapps.mypetai.feature.discover.ui.action.DiscoverAction
-import me.yeahapps.mypetai.feature.discover.ui.action.DiscoverAction.*
+import me.yeahapps.mypetai.feature.discover.ui.action.DiscoverAction.NavigateToSongInfo
 import me.yeahapps.mypetai.feature.discover.ui.event.DiscoverEvent
-import me.yeahapps.mypetai.feature.discover.ui.screen.DiscoverContainer
 import me.yeahapps.mypetai.feature.discover.ui.state.DiscoverState
 import javax.inject.Inject
 
 @HiltViewModel
 class DiscoverViewModel @Inject constructor(
-    private val discoverRepository: DiscoverRepository
+    private val discoverRepository: DiscoverRepository, private val billingManager: BillingManager
 ) : BaseViewModel<DiscoverState, DiscoverEvent, DiscoverAction>(initialState = DiscoverState()) {
 
     override fun obtainEvent(viewEvent: DiscoverEvent) {
@@ -43,6 +43,11 @@ class DiscoverViewModel @Inject constructor(
         viewModelScoped {
             discoverRepository.getSongCategories().collectLatest { categories ->
                 updateViewState { copy(songCategories = categories) }
+            }
+        }
+        viewModelScoped {
+            billingManager.isSubscribed.collectLatest { hasSubscription ->
+                updateViewState { copy(hasSubscription = hasSubscription) }
             }
         }
     }
