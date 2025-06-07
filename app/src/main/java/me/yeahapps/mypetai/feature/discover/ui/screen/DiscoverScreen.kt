@@ -51,6 +51,7 @@ import kotlinx.coroutines.delay
 import me.yeahapps.mypetai.R
 import me.yeahapps.mypetai.core.ui.component.button.GetProButton
 import me.yeahapps.mypetai.core.ui.component.topbar.PetAISecondaryTopAppBar
+import me.yeahapps.mypetai.core.ui.navigation.commonModifier
 import me.yeahapps.mypetai.core.ui.theme.PetAITheme
 import me.yeahapps.mypetai.core.ui.utils.collectFlowWithLifecycle
 import me.yeahapps.mypetai.feature.discover.domain.model.SongModel
@@ -62,11 +63,13 @@ import me.yeahapps.mypetai.feature.discover.ui.component.TryNowButton
 import me.yeahapps.mypetai.feature.discover.ui.event.DiscoverEvent
 import me.yeahapps.mypetai.feature.discover.ui.state.DiscoverState
 import me.yeahapps.mypetai.feature.discover.ui.viewmodel.DiscoverViewModel
+import me.yeahapps.mypetai.feature.subscription.ui.screen.SubscriptionsContainer
 
 @Composable
 fun DiscoverContainer(
     modifier: Modifier = Modifier,
     viewModel: DiscoverViewModel = hiltViewModel(),
+    navigateToSubscriptions: () -> Unit,
     navigateToCreate: () -> Unit,
     navigateToSongInfo: (SongModel) -> Unit
 ) {
@@ -74,19 +77,24 @@ fun DiscoverContainer(
     viewModel.viewActions.collectFlowWithLifecycle(viewModel) { action ->
         when (action) {
             is DiscoverAction.NavigateToSongInfo -> navigateToSongInfo(action.song)
+            is DiscoverAction.NavigateToSubscriptions -> navigateToSubscriptions()
             is DiscoverAction.NavigateToCreate -> navigateToCreate()
             null -> {}
         }
     }
 
     DiscoverContent(
-        modifier = modifier, state = state, onEvent = remember { { event -> viewModel.obtainEvent(event) } })
+        modifier = modifier,
+        state = state,
+        onEvent = remember { { event -> viewModel.obtainEvent(event) } })
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun DiscoverContent(
-    modifier: Modifier = Modifier, state: DiscoverState = DiscoverState(), onEvent: (DiscoverEvent) -> Unit = {},
+    modifier: Modifier = Modifier,
+    state: DiscoverState = DiscoverState(),
+    onEvent: (DiscoverEvent) -> Unit = {},
 ) {
     var isButtonExpanded by remember { mutableStateOf(true) }
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -186,7 +194,7 @@ private fun DiscoverContent(
                     .wrapContentSize()
                     .systemBarsPadding()
             ) {
-                if (isButtonExpanded) onEvent(DiscoverEvent.NavigateToCreate)
+                if (isButtonExpanded) onEvent(DiscoverEvent.NavigateToSubscriptions)
                 else isButtonExpanded = true
             }
         })

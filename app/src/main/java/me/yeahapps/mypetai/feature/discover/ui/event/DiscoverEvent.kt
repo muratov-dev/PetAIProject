@@ -8,4 +8,5 @@ sealed interface DiscoverEvent {
 
     data class NavigateToSongInfo(val song: SongModel) : DiscoverEvent
     data object NavigateToCreate : DiscoverEvent
+    data object NavigateToSubscriptions : DiscoverEvent
 }

@@ -21,9 +21,7 @@ class SubscriptionsViewModel @Inject constructor(
             }
 
             is SubscriptionsEvent.SelectSubscription -> updateViewState { copy(selectedDetails = viewEvent.details) }
-
-            SubscriptionsEvent.NavigateToRoot -> sendAction(SubscriptionsAction.NavigateToRoot)
-            SubscriptionsEvent.NavigateUp -> sendAction(SubscriptionsAction.NavigateUp)
+            SubscriptionsEvent.CloseScreen -> sendAction(SubscriptionsAction.CloseScreen)
         }
     }
 

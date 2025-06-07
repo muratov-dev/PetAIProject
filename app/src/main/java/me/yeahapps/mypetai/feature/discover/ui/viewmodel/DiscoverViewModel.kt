@@ -6,7 +6,9 @@ import me.yeahapps.mypetai.core.ui.viewmodel.BaseViewModel
 import me.yeahapps.mypetai.feature.discover.domain.model.SongCategoryModel
 import me.yeahapps.mypetai.feature.discover.domain.repository.DiscoverRepository
 import me.yeahapps.mypetai.feature.discover.ui.action.DiscoverAction
+import me.yeahapps.mypetai.feature.discover.ui.action.DiscoverAction.*
 import me.yeahapps.mypetai.feature.discover.ui.event.DiscoverEvent
+import me.yeahapps.mypetai.feature.discover.ui.screen.DiscoverContainer
 import me.yeahapps.mypetai.feature.discover.ui.state.DiscoverState
 import javax.inject.Inject
 
@@ -19,8 +21,9 @@ class DiscoverViewModel @Inject constructor(
         when (viewEvent) {
             is DiscoverEvent.SelectCategory -> updateViewState { copy(selectedCategory = viewEvent.category) }
 
-            is DiscoverEvent.NavigateToSongInfo -> sendAction(DiscoverAction.NavigateToSongInfo(viewEvent.song))
+            is DiscoverEvent.NavigateToSongInfo -> sendAction(NavigateToSongInfo(viewEvent.song))
             DiscoverEvent.NavigateToCreate -> sendAction(DiscoverAction.NavigateToCreate)
+            DiscoverEvent.NavigateToSubscriptions -> sendAction(DiscoverAction.NavigateToSubscriptions)
         }
     }
 

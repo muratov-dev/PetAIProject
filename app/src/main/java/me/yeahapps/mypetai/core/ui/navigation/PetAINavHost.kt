@@ -17,8 +17,6 @@ import me.yeahapps.mypetai.feature.discover.ui.screen.SongInfoContainer
 import me.yeahapps.mypetai.feature.discover.ui.screen.SongInfoScreen
 import me.yeahapps.mypetai.feature.onboarding.ui.screen.OnboardingContainer
 import me.yeahapps.mypetai.feature.onboarding.ui.screen.OnboardingScreen
-import me.yeahapps.mypetai.feature.subscription.ui.screen.SubscriptionsContainer
-import me.yeahapps.mypetai.feature.subscription.ui.screen.SubscriptionsScreen
 import me.yeahapps.mypetai.feature.profile.ui.screen.MyWorksContainer
 import me.yeahapps.mypetai.feature.profile.ui.screen.MyWorksInfoContainer
 import me.yeahapps.mypetai.feature.profile.ui.screen.MyWorksInfoScreen
@@ -33,10 +31,7 @@ fun PetAINavHost(startDestination: Any, navController: NavHostController, modifi
         composable<OnboardingScreen> {
             OnboardingContainer(
                 modifier = Modifier.commonModifier(),
-                navigateToSubscriptions = { navController.navigate(SubscriptionsScreen) })
-        }
-        composable<SubscriptionsScreen> {
-            SubscriptionsContainer(modifier = Modifier.commonModifier())
+                navigateToSubscriptions = { navController.navigate(RootScreen) })
         }
         composable<RootScreen> {
             RootContainer(modifier = Modifier.commonModifier(), parentNavController = navController)

@@ -145,7 +145,7 @@ private fun MyWorksInfoContent(
             PetAIPrimaryButton(
                 centerContent = "Save",
                 colors = PetAIButtonDefaults.colors(contentColor = PetAITheme.colors.buttonTextPrimary),
-                onClick = { },
+                onClick = { onEvent(MyWorksInfoEvent.SaveToGallery) },
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(Modifier.size(24.dp))

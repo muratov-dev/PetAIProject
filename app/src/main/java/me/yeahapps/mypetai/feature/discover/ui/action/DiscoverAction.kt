@@ -6,4 +6,5 @@ sealed interface DiscoverAction {
     data class NavigateToSongInfo(val song: SongModel) : DiscoverAction
 
     data object NavigateToCreate : DiscoverAction
+    data object NavigateToSubscriptions : DiscoverAction
 }

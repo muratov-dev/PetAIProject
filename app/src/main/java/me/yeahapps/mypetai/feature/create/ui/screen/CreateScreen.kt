@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -26,6 +27,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -52,10 +54,12 @@ import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import me.yeahapps.mypetai.R
 import me.yeahapps.mypetai.core.ui.component.bottomsheet.ImageSourceSelectorBottomSheet
+import me.yeahapps.mypetai.core.ui.component.button.GetProButton
 import me.yeahapps.mypetai.core.ui.component.button.filled.PetAIPrimaryButton
 import me.yeahapps.mypetai.core.ui.component.topbar.PetAISecondaryTopAppBar
 import me.yeahapps.mypetai.core.ui.theme.PetAITheme
@@ -77,6 +81,7 @@ fun CreateContainer(
     modifier: Modifier = Modifier,
     viewModel: CreateViewModel = hiltViewModel(),
     navigateToProcessing: (String, String) -> Unit,
+    navigateToSubscriptions: () -> Unit,
     navigateToRecord: () -> Unit
 ) {
     val context = LocalContext.current
@@ -95,6 +100,7 @@ fun CreateContainer(
             CreateAction.PlayAudio -> exoPlayer.play()
             CreateAction.RecordAudio -> navigateToRecord()
             is CreateAction.StartCreatingVideo -> navigateToProcessing(action.imageUri, action.audioUri)
+            CreateAction.NavigateToSubscriptions -> navigateToSubscriptions()
             null -> {}
         }
     }
@@ -147,6 +153,14 @@ private fun CreateContent(
         } else Timber.d("No media selected")
     }
 
+    var isButtonExpanded by remember { mutableStateOf(true) }
+    LaunchedEffect(isButtonExpanded) {
+        if (isButtonExpanded) {
+            delay(5000)
+            isButtonExpanded = false
+        }
+    }
+
     val photoUri: Uri = FileProvider.getUriForFile(
         context, "${context.packageName}.provider", createImageFile(context)
     )
@@ -184,7 +198,16 @@ private fun CreateContent(
     }
 
     Column(modifier = modifier.padding(horizontal = 16.dp)) {
-        PetAISecondaryTopAppBar(title = { Text(text = stringResource(R.string.create_label)) })
+        PetAISecondaryTopAppBar(title = { Text(text = stringResource(R.string.create_label)) }, endAction = {
+            GetProButton(
+                modifier = Modifier
+                    .wrapContentSize()
+                    .systemBarsPadding()
+            ) {
+                if (isButtonExpanded) onEvent(CreateEvent.NavigateToSubscriptions)
+                else isButtonExpanded = true
+            }
+        })
         Spacer(Modifier.size(20.dp))
         ImageSelectCard(context = context, imageUri = state.userImageUri) { imageSourceSelectorVisible = true }
 
@@ -262,7 +285,7 @@ private fun CreateContent(
         Spacer(Modifier.size(60.dp))
         PetAIPrimaryButton(
             centerContent = stringResource(R.string.create_label),
-            enabled = state.isButtonEnabled,
+            enabled = state.isButtonEnabled && state.hasSubscription,
             onClick = { onEvent(CreateEvent.StartCreatingVideo) },
             modifier = Modifier.fillMaxWidth()
         )

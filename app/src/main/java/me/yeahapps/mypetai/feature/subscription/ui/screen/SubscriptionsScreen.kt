@@ -10,10 +10,12 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
@@ -27,9 +29,11 @@ import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.fromHtml
 import androidx.compose.ui.text.style.TextAlign
@@ -43,18 +47,27 @@ import me.yeahapps.mypetai.core.ui.component.button.filled.PetAIPrimaryButton
 import me.yeahapps.mypetai.core.ui.component.button.icon.PetAIIconButton
 import me.yeahapps.mypetai.core.ui.component.button.icon.PetAIIconButtonDefaults
 import me.yeahapps.mypetai.core.ui.theme.PetAITheme
+import me.yeahapps.mypetai.core.ui.utils.collectFlowWithLifecycle
+import me.yeahapps.mypetai.feature.subscription.ui.action.SubscriptionsAction
 import me.yeahapps.mypetai.feature.subscription.ui.component.SubscriptionItem
 import me.yeahapps.mypetai.feature.subscription.ui.event.SubscriptionsEvent
 import me.yeahapps.mypetai.feature.subscription.ui.state.SubscriptionsState
 import me.yeahapps.mypetai.feature.subscription.ui.viewmodel.SubscriptionsViewModel
 import kotlin.math.roundToInt
 
-@Serializable
-object SubscriptionsScreen
-
 @Composable
-fun SubscriptionsContainer(modifier: Modifier = Modifier, viewModel: SubscriptionsViewModel = hiltViewModel()) {
+fun SubscriptionsContainer(
+    modifier: Modifier = Modifier,
+    viewModel: SubscriptionsViewModel = hiltViewModel(),
+    onScreenClose: () -> Unit
+) {
     val state by viewModel.viewState.collectAsStateWithLifecycle()
+    viewModel.viewActions.collectFlowWithLifecycle(viewModel) { action ->
+        when (action) {
+            SubscriptionsAction.CloseScreen -> onScreenClose()
+            null -> {}
+        }
+    }
     SubscriptionsContent(
         modifier = modifier, state = state, onEvent = remember { { event -> viewModel.obtainEvent(event) } })
 }
@@ -94,28 +107,111 @@ private fun SubscriptionsContent(
                         }
                     })
         }
-        Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Bottom)) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Bottom),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = "Upgrade Plan Now!",
+                style = PetAITheme.typography.headlineBold,
+                color = PetAITheme.colors.textPrimary
+            )
+            Spacer(Modifier.size(16.dp))
+            Row(
+                modifier = Modifier
+                    .padding(horizontal = 48.dp)
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(id = R.drawable.ic_check_bg),
+                    contentDescription = null,
+                    tint = PetAITheme.colors.buttonPrimaryDefault,
+                    modifier = Modifier.size(24.dp)
+                )
+                Text(
+                    text = "Unlimited Generate With AI",
+                    textAlign = TextAlign.Start,
+                    style = PetAITheme.typography.buttonTextRegular,
+                    color = PetAITheme.colors.textPrimary
+                )
+            }
+            Row(
+                modifier = Modifier
+                    .padding(horizontal = 48.dp)
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(id = R.drawable.ic_check_bg),
+                    contentDescription = null,
+                    tint = PetAITheme.colors.buttonPrimaryDefault,
+                    modifier = Modifier.size(24.dp)
+                )
+                Text(
+                    text = "Pictured Talking And Singing",
+                    textAlign = TextAlign.Start,
+                    style = PetAITheme.typography.buttonTextRegular,
+                    color = PetAITheme.colors.textPrimary
+                )
+            }
+            Row(
+                modifier = Modifier
+                    .padding(horizontal = 48.dp)
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(id = R.drawable.ic_check_bg),
+                    contentDescription = null,
+                    tint = PetAITheme.colors.buttonPrimaryDefault,
+                    modifier = Modifier.size(24.dp)
+                )
+                Text(
+                    text = "Faster Rendering",
+                    textAlign = TextAlign.Start,
+                    style = PetAITheme.typography.buttonTextRegular,
+                    color = PetAITheme.colors.textPrimary
+                )
+            }
+            Spacer(Modifier.size(16.dp))
             CompositionLocalProvider(LocalContentColor provides PetAITheme.colors.textPrimary) {
-                state.subscriptionsList.forEach { product ->
-                    val offer = product.subscriptionOfferDetails?.firstOrNull() ?: return@forEach
-                    val pricePerWeek = getWeeklyPrice(product)
-                    val fullPrice = offer.pricingPhases.pricingPhaseList.firstOrNull()?.formattedPrice ?: "-"
-                    val title = if (getWeeks(product) > 1) "Yearly Access" else "Weekly Access"
-                    val subtitle = if (getWeeks(product) > 1) "Just $fullPrice per year" else "Cancel Anytime"
+                if (state.subscriptionsList.isEmpty()) {
+                    Box(
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp)
+                            .fillMaxWidth()
+                            .height(200.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(text = "No subscriptions available", style = PetAITheme.typography.headlineMedium)
+                    }
+                } else {
+                    state.subscriptionsList.forEach { product ->
+                        val offer = product.subscriptionOfferDetails?.firstOrNull() ?: return@forEach
+                        val pricePerWeek = getWeeklyPrice(product)
+                        val fullPrice = offer.pricingPhases.pricingPhaseList.firstOrNull()?.formattedPrice ?: "-"
+                        val title = if (getWeeks(product) > 1) "Yearly Access" else "Weekly Access"
+                        val subtitle = if (getWeeks(product) > 1) "Just $fullPrice per year" else "Cancel Anytime"
 
-                    val discount = if (state.subscriptionsList.size == 2 && getWeeks(product) > 1) {
-                        val weekly = state.subscriptionsList.firstOrNull { getWeeks(it) == 1 }
-                        weekly?.let { calculateDiscountPercent(product, it) }
-                    } else null
+                        val discount = if (state.subscriptionsList.size == 2 && getWeeks(product) > 1) {
+                            val weekly = state.subscriptionsList.firstOrNull { getWeeks(it) == 1 }
+                            weekly?.let { calculateDiscountPercent(product, it) }
+                        } else null
 
-                    SubscriptionItem(
-                        modifier = Modifier.padding(horizontal = 16.dp),
-                        title = title,
-                        subtitle = subtitle,
-                        weeklyPrice = pricePerWeek,
-                        discountPercent = discount,
-                        selected = state.selectedDetails == product,
-                        onClick = { onEvent(SubscriptionsEvent.SelectSubscription(product)) })
+                        SubscriptionItem(
+                            modifier = Modifier.padding(horizontal = 16.dp),
+                            title = title,
+                            subtitle = subtitle,
+                            weeklyPrice = pricePerWeek,
+                            discountPercent = discount,
+                            selected = state.selectedDetails == product,
+                            onClick = { onEvent(SubscriptionsEvent.SelectSubscription(product)) })
+                    }
                 }
             }
             Spacer(Modifier.size(24.dp))
@@ -169,7 +265,8 @@ private fun SubscriptionsContent(
             colors = PetAIIconButtonDefaults.colors(
                 containerColor = PetAITheme.colors.buttonSecondaryDefault,
                 contentColor = PetAITheme.colors.buttonTextPrimary
-            )
+            ),
+            onClick = { onEvent(SubscriptionsEvent.CloseScreen) }
         )
     }
 }

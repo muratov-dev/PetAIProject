@@ -6,6 +6,7 @@ sealed interface CreateAction {
     data object PauseAudio : CreateAction
 
     data object RecordAudio : CreateAction
+    data object NavigateToSubscriptions : CreateAction
 
     data class StartCreatingVideo(val imageUri: String, val audioUri: String) : CreateAction
 }

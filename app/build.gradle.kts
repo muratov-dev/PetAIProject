@@ -15,11 +15,11 @@ android {
 
     defaultConfig {
         applicationId = "me.yeahapps.mypetai"
-        minSdk = 26
+        minSdk = 29
         targetSdk = 35
         val majorVersion = 1
-        val minorVersion = 2
-        val patchVersion = 2
+        val minorVersion = 3
+        val patchVersion = 0
 
         versionCode = majorVersion * 10000 + minorVersion * 100 + patchVersion
         versionName = "${majorVersion}.${minorVersion}.${patchVersion}"

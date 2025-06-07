@@ -2,9 +2,12 @@ package me.yeahapps.mypetai.feature.profile.ui.screen
 
 import android.content.ActivityNotFoundException
 import android.content.Intent
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -19,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
@@ -32,17 +36,31 @@ import me.yeahapps.mypetai.feature.profile.ui.viewmodel.ProfileViewModel
 
 @Composable
 fun ProfileContainer(
-    modifier: Modifier = Modifier, viewModel: ProfileViewModel = hiltViewModel(), navigateToMyWorks: () -> Unit
+    modifier: Modifier = Modifier,
+    viewModel: ProfileViewModel = hiltViewModel(),
+    navigateToMyWorks: () -> Unit,
+    navigateToSubscriptions: () -> Unit
 ) {
     val myWorksCount by viewModel.myWorksCount.collectAsStateWithLifecycle()
+    val hasSubscription by viewModel.hasSubscription.collectAsStateWithLifecycle()
     ProfileContent(
-        modifier = modifier.systemBarsPadding(), myWorksCount = myWorksCount, navigateToMyWorks = navigateToMyWorks
+        modifier = modifier.systemBarsPadding(),
+        myWorksCount = myWorksCount,
+        hasSubscription = hasSubscription,
+        navigateToMyWorks = navigateToMyWorks,
+        navigateToSubscriptions = navigateToSubscriptions
     )
 }
 
 //TODO вынеси ресурсы и добавь логику на кнопки
 @Composable
-private fun ProfileContent(modifier: Modifier = Modifier, myWorksCount: Int, navigateToMyWorks: () -> Unit) {
+private fun ProfileContent(
+    modifier: Modifier = Modifier,
+    myWorksCount: Int,
+    hasSubscription: Boolean,
+    navigateToMyWorks: () -> Unit,
+    navigateToSubscriptions: () -> Unit
+) {
     val context = LocalContext.current
     Column(modifier = modifier) {
         PetAISecondaryTopAppBar(title = {
@@ -54,6 +72,19 @@ private fun ProfileContent(modifier: Modifier = Modifier, myWorksCount: Int, nav
             )
         })
         Spacer(modifier = Modifier.height(8.dp))
+        if (!hasSubscription) {
+            Image(
+                painter = painterResource(R.drawable.im_card_pro),
+                contentDescription = null,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(2f / 1f)
+                    .clickable {
+                        navigateToSubscriptions()
+                    }
+            )
+            Spacer(modifier = Modifier.height(24.dp))
+        }
         PetAISecondaryButton(
             text = "My Works ($myWorksCount)",
             onClick = navigateToMyWorks,

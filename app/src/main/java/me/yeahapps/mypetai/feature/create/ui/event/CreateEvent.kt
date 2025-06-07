@@ -15,4 +15,5 @@ sealed interface CreateEvent {
     data object PauseAudio : CreateEvent
 
     data object StartCreatingVideo: CreateEvent
+    data object NavigateToSubscriptions: CreateEvent
 }
