@@ -190,13 +190,15 @@ private fun DiscoverContent(
                     .statusBarsPadding()
             )
         }, endAction = {
-            GetProButton(
-                modifier = Modifier
-                    .wrapContentSize()
-                    .statusBarsPadding()
-            ) {
-                if (isButtonExpanded) onEvent(DiscoverEvent.NavigateToSubscriptions)
-                else isButtonExpanded = true
+            if (!state.hasSubscription){
+                GetProButton(
+                    modifier = Modifier
+                        .wrapContentSize()
+                        .statusBarsPadding()
+                ) {
+                    if (isButtonExpanded) onEvent(DiscoverEvent.NavigateToSubscriptions)
+                    else isButtonExpanded = true
+                }
             }
         })
         FloatingActionButton(

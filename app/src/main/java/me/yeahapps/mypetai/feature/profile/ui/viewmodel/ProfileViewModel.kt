@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
@@ -21,7 +22,8 @@ class ProfileViewModel @Inject constructor(
     val myWorksCount = _myWorksCount.asStateFlow()
 
     private val _hasSubscription = MutableStateFlow(false)
-    val hasSubscription = _hasSubscription.asStateFlow()
+    val hasSubscription: StateFlow<Boolean>
+        get() = _hasSubscription.asStateFlow()
 
     init {
         viewModelScope.launch {

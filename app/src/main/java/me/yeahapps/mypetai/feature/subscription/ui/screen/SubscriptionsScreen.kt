@@ -31,6 +31,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -70,7 +71,9 @@ fun SubscriptionsContainer(
         }
     }
     SubscriptionsContent(
-        modifier = modifier, state = state, onEvent = remember { { event -> viewModel.obtainEvent(event) } })
+        modifier = modifier.pointerInput(true) {},
+        state = state,
+        onEvent = remember { { event -> viewModel.obtainEvent(event) } })
 }
 
 @Composable
