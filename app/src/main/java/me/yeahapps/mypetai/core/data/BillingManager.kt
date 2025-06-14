@@ -2,6 +2,8 @@ package me.yeahapps.mypetai.core.data
 
 import android.app.Activity
 import android.content.Context
+import android.content.SharedPreferences
+import androidx.core.content.edit
 import com.android.billingclient.api.AcknowledgePurchaseParams
 import com.android.billingclient.api.BillingClient
 import com.android.billingclient.api.BillingClientStateListener
@@ -13,16 +15,15 @@ import com.android.billingclient.api.PurchasesUpdatedListener
 import com.android.billingclient.api.QueryProductDetailsParams
 import com.android.billingclient.api.QueryPurchasesParams
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import me.yeahapps.mypetai.core.di.ApplicationCoroutineScope
+import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class BillingManager @Inject constructor(
-    @ApplicationContext private val context: Context, @ApplicationCoroutineScope private val scope: CoroutineScope
+    @ApplicationContext private val context: Context, private val sharedPreferences: SharedPreferences
 ) : PurchasesUpdatedListener {
 
     private val billingClient = BillingClient.newBuilder(context).enablePendingPurchases().setListener(this).build()
@@ -38,7 +39,12 @@ class BillingManager @Inject constructor(
     val billingError: StateFlow<String?> = _billingError
 
     init {
-        startBillingConnection()
+        val hasRelativeSubscription = sharedPreferences.getBoolean("relativeSubscriptionActivated", false)
+        if (hasRelativeSubscription) {
+            _isSubscribed.update { true }
+        } else {
+            startBillingConnection()
+        }
     }
 
     /**
@@ -60,6 +66,11 @@ class BillingManager @Inject constructor(
                 _billingError.value = "Billing service disconnected"
             }
         })
+    }
+
+    fun activateRelativesSubscription() {
+        sharedPreferences.edit { putBoolean("relativeSubscriptionActivated", true) }
+        _isSubscribed.update { true }
     }
 
     /**

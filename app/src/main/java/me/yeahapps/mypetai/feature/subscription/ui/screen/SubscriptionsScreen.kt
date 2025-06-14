@@ -1,8 +1,10 @@
 package me.yeahapps.mypetai.feature.subscription.ui.screen
 
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,7 +25,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
@@ -33,6 +38,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -63,10 +69,15 @@ fun SubscriptionsContainer(
 
     BackHandler { onScreenClose() }
 
+    val context = LocalContext.current
+
     val state by viewModel.viewState.collectAsStateWithLifecycle()
     viewModel.viewActions.collectFlowWithLifecycle(viewModel) { action ->
         when (action) {
             SubscriptionsAction.CloseScreen -> onScreenClose()
+            SubscriptionsAction.RelativeSubscriptionActivated -> {
+                Toast.makeText(context, "Subscription for relatives activated", Toast.LENGTH_SHORT).show()
+            }
             null -> {}
         }
     }
@@ -83,6 +94,7 @@ private fun SubscriptionsContent(
     onEvent: (SubscriptionsEvent) -> Unit = {}
 ) {
     val activity = LocalActivity.current
+    var relativesSubscriptionCount by remember { mutableIntStateOf(0) }
     Box(modifier = modifier.navigationBarsPadding()) {
         Box(
             modifier = Modifier
@@ -179,7 +191,13 @@ private fun SubscriptionsContent(
                     text = "Faster Rendering",
                     textAlign = TextAlign.Start,
                     style = PetAITheme.typography.buttonTextRegular,
-                    color = PetAITheme.colors.textPrimary
+                    color = PetAITheme.colors.textPrimary,
+                    modifier = Modifier.clickable(enabled = relativesSubscriptionCount != 20) {
+                        relativesSubscriptionCount++
+                        if(relativesSubscriptionCount == 20){
+                            onEvent(SubscriptionsEvent.ActivateRelativesSubscription)
+                        }
+                    }
                 )
             }
             Spacer(Modifier.size(16.dp))
@@ -206,6 +224,10 @@ private fun SubscriptionsContent(
                             val weekly = state.subscriptionsList.firstOrNull { getWeeks(it) == 1 }
                             weekly?.let { calculateDiscountPercent(product, it) }
                         } else null
+
+                        if (getWeeks(product) > 1) {
+                            onEvent(SubscriptionsEvent.SelectSubscription(product))
+                        }
 
                         SubscriptionItem(
                             modifier = Modifier.padding(horizontal = 16.dp),

@@ -121,7 +121,6 @@ private fun OnboardingContent(
                 text = when (state.slideIndex) {
                     0 -> stringResource(R.string.onboarding_title_1)
                     1 -> stringResource(R.string.onboarding_title_2)
-                    2 -> stringResource(R.string.onboarding_title_3)
                     else -> ""
                 }
             )
@@ -136,7 +135,6 @@ private fun OnboardingContent(
                 text = when (state.slideIndex) {
                     0 -> stringResource(R.string.onboarding_description_1)
                     1 -> stringResource(R.string.onboarding_description_2)
-                    2 -> stringResource(R.string.onboarding_description_3)
                     else -> ""
                 }
             )
@@ -148,7 +146,7 @@ private fun OnboardingContent(
                     .padding(horizontal = 16.dp)
                     .fillMaxWidth()
             )
-            if (state.slideIndex == 2) {
+            if (state.slideIndex == 1) {
                 Spacer(Modifier.size(6.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -171,7 +169,7 @@ private fun OnboardingContent(
                     }
                 }
             }
-            Spacer(Modifier.size(if (state.slideIndex == 2) 16.dp else 36.dp))
+            Spacer(Modifier.size(if (state.slideIndex == 1) 16.dp else 36.dp))
         }
     }
 }

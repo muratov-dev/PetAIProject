@@ -63,6 +63,8 @@ fun AudioRecordContainer(
                 Toast.makeText(context, context.getString(R.string.audio_record_permission_denied), Toast.LENGTH_SHORT)
                     .show()
                 navigateUp()
+            } else {
+                viewModel.obtainEvent(AudioRecordEvent.StartRecording)
             }
         }
 

@@ -7,6 +7,10 @@ import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
@@ -38,7 +42,10 @@ class MainActivity : ComponentActivity() {
                     startDestination = if (isFirstLaunch) OnboardingScreen else RootScreen,
                     isFirstLaunch = isFirstLaunch
                 )
-                if (!isFirstLaunch) RequestInAppReview(LocalContext.current)
+                var showDialog by remember { mutableStateOf(true) }
+                if (!isFirstLaunch) RequestInAppReview(
+                    showDialog, onDismiss = { showDialog = false }, context = LocalContext.current
+                )
             }
         }
     }

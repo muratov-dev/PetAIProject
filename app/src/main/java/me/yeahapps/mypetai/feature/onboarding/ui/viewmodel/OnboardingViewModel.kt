@@ -20,7 +20,7 @@ class OnboardingViewModel @Inject constructor(
 
     private fun showNextSlide() {
         val nextSlide = currentState.slideIndex + 1
-        if (nextSlide > 2) sendAction(OnboardingAction.NavigateToSubscriptionScreen)
+        if (nextSlide > 1) sendAction(OnboardingAction.NavigateToSubscriptionScreen)
         else updateViewState { copy(slideIndex = nextSlide) }
     }
 

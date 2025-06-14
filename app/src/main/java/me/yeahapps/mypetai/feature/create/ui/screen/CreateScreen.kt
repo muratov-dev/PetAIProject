@@ -199,7 +199,7 @@ private fun CreateContent(
 
     Column(modifier = modifier.padding(horizontal = 16.dp)) {
         PetAISecondaryTopAppBar(title = { Text(text = stringResource(R.string.create_label)) }, endAction = {
-            if(!state.hasSubscription){
+            if (!state.hasSubscription) {
                 GetProButton(
                     modifier = Modifier
                         .wrapContentSize()
@@ -286,10 +286,10 @@ private fun CreateContent(
         }
         Spacer(Modifier.size(60.dp))
         PetAIPrimaryButton(
-            centerContent = stringResource(R.string.create_label),
-            enabled = state.isButtonEnabled && state.hasSubscription,
-            onClick = { onEvent(CreateEvent.StartCreatingVideo) },
-            modifier = Modifier.fillMaxWidth()
+            centerContent = stringResource(R.string.create_label), enabled = state.isButtonEnabled, onClick = {
+                if (state.hasSubscription) onEvent(CreateEvent.StartCreatingVideo)
+                else onEvent(CreateEvent.NavigateToSubscriptions)
+            }, modifier = Modifier.fillMaxWidth()
         )
     }
 

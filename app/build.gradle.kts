@@ -19,7 +19,7 @@ android {
         targetSdk = 35
         val majorVersion = 1
         val minorVersion = 3
-        val patchVersion = 2
+        val patchVersion = 4
 
         versionCode = majorVersion * 10000 + minorVersion * 100 + patchVersion
         versionName = "${majorVersion}.${minorVersion}.${patchVersion}"
@@ -80,8 +80,8 @@ dependencies {
     implementation(libs.bundles.media3)
     implementation(libs.media)
 
-    implementation("com.google.android.play:review:2.0.2")
-    implementation("com.android.billingclient:billing:7.1.1")
+    implementation(libs.review)
+    implementation(libs.billing)
 
     implementation(platform(libs.firebase.bom))
     implementation(libs.bundles.firebase)

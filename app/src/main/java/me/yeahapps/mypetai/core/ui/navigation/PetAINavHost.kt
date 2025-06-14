@@ -41,7 +41,7 @@ fun PetAINavHost(
         }
 
         composable<AudioRecordScreen> {
-            AudioRecordContainer(modifier = Modifier.commonModifier(), navigateUp = { navController.navigateUp() })
+            AudioRecordContainer(modifier = Modifier.commonModifier(), navigateUp = { navController.popBackStack() })
         }
         composable<VideoProcessingScreen> {
             VideoProcessingScreenContainer(modifier = Modifier.commonModifier(), navigateUp = {

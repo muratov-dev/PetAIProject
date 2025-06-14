@@ -169,7 +169,7 @@ private fun DiscoverContent(
             if (state.songs.isEmpty()) item { CategoryItemPlaceholder() }
             else {
                 items(state.songCategories, key = { it.id }) { category ->
-                    val filteredSongs = state.songs.filter { it.songCategories.contains(category.name) }
+                    val filteredSongs = state.songs.filter { it.songCategories.contains(category.name) }.shuffled()
                     if (filteredSongs.isEmpty()) return@items
                     CategoryItem(
                         category = category,

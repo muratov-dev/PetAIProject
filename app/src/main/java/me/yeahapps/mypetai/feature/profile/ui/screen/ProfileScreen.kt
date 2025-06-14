@@ -32,6 +32,7 @@ import me.yeahapps.mypetai.R
 import me.yeahapps.mypetai.core.ui.component.button.filled.PetAISecondaryButton
 import me.yeahapps.mypetai.core.ui.component.topbar.PetAISecondaryTopAppBar
 import me.yeahapps.mypetai.core.ui.theme.PetAITheme
+import me.yeahapps.mypetai.feature.profile.ui.state.ProfileState
 import me.yeahapps.mypetai.feature.profile.ui.viewmodel.ProfileViewModel
 
 @Composable
@@ -41,12 +42,10 @@ fun ProfileContainer(
     navigateToMyWorks: () -> Unit,
     navigateToSubscriptions: () -> Unit
 ) {
-    val myWorksCount by viewModel.myWorksCount.collectAsStateWithLifecycle()
-    val hasSubscription by viewModel.hasSubscription.collectAsStateWithLifecycle()
+    val state by viewModel.state.collectAsStateWithLifecycle()
     ProfileContent(
         modifier = modifier.systemBarsPadding(),
-        myWorksCount = myWorksCount,
-        hasSubscription = hasSubscription,
+        state = state,
         navigateToMyWorks = navigateToMyWorks,
         navigateToSubscriptions = navigateToSubscriptions
     )
@@ -56,8 +55,7 @@ fun ProfileContainer(
 @Composable
 private fun ProfileContent(
     modifier: Modifier = Modifier,
-    myWorksCount: Int,
-    hasSubscription: Boolean,
+    state: ProfileState = ProfileState(),
     navigateToMyWorks: () -> Unit,
     navigateToSubscriptions: () -> Unit
 ) {
@@ -72,7 +70,7 @@ private fun ProfileContent(
             )
         })
         Spacer(modifier = Modifier.height(8.dp))
-        if (!hasSubscription) {
+        if (!state.hasSubscription) {
             Image(
                 painter = painterResource(R.drawable.im_card_pro),
                 contentDescription = null,
@@ -86,7 +84,7 @@ private fun ProfileContent(
             Spacer(modifier = Modifier.height(24.dp))
         }
         PetAISecondaryButton(
-            text = "My Works ($myWorksCount)",
+            text = "My Works (${state.myWorksCount})",
             onClick = navigateToMyWorks,
             modifier = Modifier
                 .padding(horizontal = 16.dp)

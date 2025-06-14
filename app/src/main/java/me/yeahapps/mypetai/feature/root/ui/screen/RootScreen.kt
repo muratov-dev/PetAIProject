@@ -8,8 +8,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -52,15 +55,17 @@ private fun RootContent(
     val currentDestinationIndex = navBackStackEntry?.destination?.route?.let { route ->
         items.indexOfFirst { it.route == route }
     } ?: 0
+    var isFirstLaunch by rememberSaveable { mutableStateOf(isFirstLaunch) }
 
 
     var isSubscriptionsScreenVisible by remember { mutableStateOf(isFirstLaunch) }
+
     LaunchedEffect(Unit) {
         if (isFirstLaunch) {
             isSubscriptionsScreenVisible = true
+            isFirstLaunch = false
         }
     }
-
 
     Scaffold(modifier = modifier.hazeSource(hazeState), bottomBar = {
         PetAIBottomNavigation(

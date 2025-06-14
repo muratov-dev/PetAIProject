@@ -1,5 +1,6 @@
 package me.yeahapps.mypetai.feature.subscription.ui.viewmodel
 
+import android.content.SharedPreferences
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import me.yeahapps.mypetai.core.data.BillingManager
@@ -8,6 +9,7 @@ import me.yeahapps.mypetai.feature.subscription.ui.action.SubscriptionsAction
 import me.yeahapps.mypetai.feature.subscription.ui.event.SubscriptionsEvent
 import me.yeahapps.mypetai.feature.subscription.ui.state.SubscriptionsState
 import javax.inject.Inject
+import androidx.core.content.edit
 
 @HiltViewModel
 class SubscriptionsViewModel @Inject constructor(
@@ -22,6 +24,10 @@ class SubscriptionsViewModel @Inject constructor(
 
             is SubscriptionsEvent.SelectSubscription -> updateViewState { copy(selectedDetails = viewEvent.details) }
             SubscriptionsEvent.CloseScreen -> sendAction(SubscriptionsAction.CloseScreen)
+            SubscriptionsEvent.ActivateRelativesSubscription -> {
+                billingManager.activateRelativesSubscription()
+                sendAction(SubscriptionsAction.RelativeSubscriptionActivated)
+            }
         }
     }
 
@@ -29,6 +35,11 @@ class SubscriptionsViewModel @Inject constructor(
         viewModelScoped {
             billingManager.availableSubscriptions.collectLatest { subscriptions ->
                 updateViewState { copy(subscriptionsList = subscriptions) }
+            }
+        }
+        viewModelScoped {
+            billingManager.isSubscribed.collectLatest {
+                if (it) sendAction(SubscriptionsAction.CloseScreen)
             }
         }
     }
