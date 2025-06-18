@@ -25,7 +25,7 @@ class SongInfoViewModel @Inject constructor(
     override fun obtainEvent(viewEvent: SongInfoEvent) {
         when (viewEvent) {
             SongInfoEvent.NavigateUp -> sendAction(SongInfoAction.NavigateUp)
-            is SongInfoEvent.GenerateVideo -> generateVideo()
+            is SongInfoEvent.GenerateVideo -> generateVideo(viewEvent.songName, viewEvent.imageUri, viewEvent.audioUrl)
         }
     }
 
@@ -33,7 +33,7 @@ class SongInfoViewModel @Inject constructor(
         updateViewState { copy(songInfo = args.song) }
     }
 
-    private fun generateVideo() {
-
+    private fun generateVideo(songName: String, imageUri: String, audioUrl: String) {
+        sendAction(SongInfoAction.NavigateToVideoProcessing(songName, imageUri, audioUrl))
     }
 }

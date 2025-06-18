@@ -1,15 +1,14 @@
 package me.yeahapps.mypetai.feature.subscription.ui.viewmodel
 
-import android.content.SharedPreferences
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import me.yeahapps.mypetai.core.data.BillingManager
 import me.yeahapps.mypetai.core.ui.viewmodel.BaseViewModel
 import me.yeahapps.mypetai.feature.subscription.ui.action.SubscriptionsAction
 import me.yeahapps.mypetai.feature.subscription.ui.event.SubscriptionsEvent
+import me.yeahapps.mypetai.feature.subscription.ui.screen.getWeeks
 import me.yeahapps.mypetai.feature.subscription.ui.state.SubscriptionsState
 import javax.inject.Inject
-import androidx.core.content.edit
 
 @HiltViewModel
 class SubscriptionsViewModel @Inject constructor(
@@ -34,6 +33,11 @@ class SubscriptionsViewModel @Inject constructor(
     init {
         viewModelScoped {
             billingManager.availableSubscriptions.collectLatest { subscriptions ->
+                subscriptions.forEach { product ->
+                    if (getWeeks(product) > 1) {
+                        updateViewState { copy(selectedDetails = product) }
+                    }
+                }
                 updateViewState { copy(subscriptionsList = subscriptions) }
             }
         }

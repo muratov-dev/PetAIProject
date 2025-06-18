@@ -225,10 +225,6 @@ private fun SubscriptionsContent(
                             weekly?.let { calculateDiscountPercent(product, it) }
                         } else null
 
-                        if (getWeeks(product) > 1) {
-                            onEvent(SubscriptionsEvent.SelectSubscription(product))
-                        }
-
                         SubscriptionItem(
                             modifier = Modifier.padding(horizontal = 16.dp),
                             title = title,

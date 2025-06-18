@@ -1,7 +1,9 @@
 package me.yeahapps.mypetai.feature.create.ui.screen
 
 import android.Manifest
+import android.view.WindowManager
 import android.widget.Toast
+import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
@@ -12,6 +14,7 @@ import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -48,6 +51,7 @@ fun AudioRecordContainer(
     modifier: Modifier = Modifier, viewModel: AudioRecordViewModel = hiltViewModel(), navigateUp: () -> Unit
 ) {
     val context = LocalContext.current
+    val activity = LocalActivity.current
     val state by viewModel.viewState.collectAsStateWithLifecycle()
 
     viewModel.viewActions.collectFlowWithLifecycle(viewModel) { action ->
@@ -70,6 +74,14 @@ fun AudioRecordContainer(
 
     LaunchedEffect(Unit) {
         micPermission.launch(Manifest.permission.RECORD_AUDIO)
+    }
+
+    DisposableEffect(Unit) {
+        activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
+        onDispose {
+            activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        }
     }
 
     AudioRecordContent(

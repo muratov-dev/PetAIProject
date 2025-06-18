@@ -1,6 +1,8 @@
 package me.yeahapps.mypetai.feature.create.ui.screen
 
+import android.view.WindowManager
 import android.widget.Toast
+import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
@@ -16,6 +18,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -57,6 +60,7 @@ fun VideoProcessingScreenContainer(
     navigateToVideo: (String) -> Unit
 ) {
     val context = LocalContext.current
+    val activity = LocalActivity.current
     val state by viewModel.viewState.collectAsStateWithLifecycle()
     viewModel.viewActions.collectFlowWithLifecycle(viewModel) { action ->
         when (action) {
@@ -69,6 +73,15 @@ fun VideoProcessingScreenContainer(
             null -> {}
         }
     }
+
+    DisposableEffect(Unit) {
+        activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
+        onDispose {
+            activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        }
+    }
+
     VideoProcessingScreenContent(
         modifier = modifier.systemBarsPadding(),
         state = state,

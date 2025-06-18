@@ -229,7 +229,6 @@ private fun SongInfoContent(
         }
     }
 
-    //TODO Вынести в общий компонент
     if (avatarSourceSelectionVisible) {
         ImageSourceSelectorBottomSheet(
             sheetState = sheetState,

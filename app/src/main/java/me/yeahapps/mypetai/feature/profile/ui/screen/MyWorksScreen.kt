@@ -18,6 +18,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
@@ -27,6 +28,7 @@ import kotlinx.serialization.Serializable
 import me.yeahapps.mypetai.R
 import me.yeahapps.mypetai.core.ui.component.SongCard
 import me.yeahapps.mypetai.core.ui.component.button.icon.PetAIIconButton
+import me.yeahapps.mypetai.core.ui.component.button.icon.PetAIIconButtonDefaults
 import me.yeahapps.mypetai.core.ui.component.topbar.PetAITopAppBar
 import me.yeahapps.mypetai.core.ui.component.topbar.PetAITopBarTitleText
 import me.yeahapps.mypetai.core.ui.theme.PetAITheme
@@ -65,7 +67,11 @@ private fun MyWorksContent(modifier: Modifier = Modifier, state: MyWorksState, o
     val gridState = rememberLazyGridState()
     Scaffold(modifier = modifier, topBar = {
         PetAITopAppBar(title = { PetAITopBarTitleText(text = "My works") }, navigationIcon = {
-            PetAIIconButton(icon = R.drawable.ic_arrow_left, onClick = { onEvent(MyWorksEvent.NavigateUp) })
+            PetAIIconButton(
+                icon = R.drawable.ic_arrow_left,
+                onClick = { onEvent(MyWorksEvent.NavigateUp) },
+                colors = PetAIIconButtonDefaults.colors(containerColor = Color.Transparent),
+            )
         })
     }) { innerPadding ->
         Box(
