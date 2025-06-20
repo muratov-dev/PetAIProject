@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -59,6 +60,7 @@ import me.yeahapps.mypetai.core.ui.component.button.icon.PetAIIconButton
 import me.yeahapps.mypetai.core.ui.component.button.icon.PetAIIconButtonDefaults
 import me.yeahapps.mypetai.core.ui.component.topbar.PetAITopAppBar
 import me.yeahapps.mypetai.core.ui.component.topbar.PetAITopBarTitleText
+import me.yeahapps.mypetai.core.ui.navigation.commonModifier
 import me.yeahapps.mypetai.core.ui.theme.PetAITheme
 import me.yeahapps.mypetai.core.ui.utils.ManagePlayerLifecycle
 import me.yeahapps.mypetai.core.ui.utils.collectFlowWithLifecycle
@@ -67,6 +69,7 @@ import me.yeahapps.mypetai.feature.discover.ui.action.SongInfoAction
 import me.yeahapps.mypetai.feature.discover.ui.event.SongInfoEvent
 import me.yeahapps.mypetai.feature.discover.ui.state.SongInfoState
 import me.yeahapps.mypetai.feature.discover.ui.viewmodel.SongInfoViewModel
+import me.yeahapps.mypetai.feature.subscription.ui.screen.SubscriptionsContainer
 import timber.log.Timber
 import java.io.File
 
@@ -78,6 +81,7 @@ fun SongInfoContainer(
     modifier: Modifier = Modifier,
     viewModel: SongInfoViewModel = hiltViewModel(),
     navigateUp: () -> Unit = {},
+    navigateToSubscriptions: () -> Unit = {},
     navigateToProcessing: (String, String, String) -> Unit
 ) {
     val state by viewModel.viewState.collectAsStateWithLifecycle()
@@ -124,6 +128,7 @@ private fun SongInfoContent(
     state: SongInfoState = SongInfoState(),
     onEvent: (SongInfoEvent) -> Unit = {},
 ) {
+    var isSubscriptionsScreenVisible by remember { mutableStateOf(false) }
     val context = LocalContext.current
     val sheetState = rememberModalBottomSheetState()
     //TODO Почистить переменные, вынести в VM
@@ -219,8 +224,12 @@ private fun SongInfoContent(
                 enabled = uria != null,
                 colors = PetAIButtonDefaults.colors(contentColor = PetAITheme.colors.buttonTextPrimary),
                 onClick = {
-                    state.songInfo?.let {
-                        onEvent(SongInfoEvent.GenerateVideo(it.name, uria.toString(), it.url))
+                    if (state.hasSubscription) {
+                        state.songInfo?.let {
+                            onEvent(SongInfoEvent.GenerateVideo(it.name, uria.toString(), it.url))
+                        }
+                    } else {
+                        isSubscriptionsScreenVisible = true
                     }
                 },
                 modifier = Modifier.fillMaxWidth()
@@ -235,6 +244,14 @@ private fun SongInfoContent(
             onDismissRequest = { avatarSourceSelectionVisible = false },
             onCameraSourceClick = { cameraPermissionLauncher.launch(Manifest.permission.CAMERA) },
             onGallerySourceClick = { pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)) })
+    }
+
+    if (isSubscriptionsScreenVisible) {
+        SubscriptionsContainer(
+            modifier = Modifier
+                .commonModifier()
+                .fillMaxSize(),
+            onScreenClose = { isSubscriptionsScreenVisible = false })
     }
 }
 

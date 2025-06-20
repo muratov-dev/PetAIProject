@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class UploadFileResponseDto(
-    @SerialName("data") val fileData: FileDataDto,
+    @SerialName("data") val fileData: FileDataDto?,
     @SerialName("status_code") val statusCode: String,
     @SerialName("status_msg") val statusMsg: String
 )

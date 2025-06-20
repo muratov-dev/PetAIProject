@@ -1,8 +1,11 @@
 package me.yeahapps.mypetai.feature.create.ui.screen
 
 import android.Manifest
+import android.content.ContentValues
 import android.content.Context
 import android.net.Uri
+import android.os.Build
+import android.provider.MediaStore
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -161,19 +164,19 @@ private fun CreateContent(
         }
     }
 
-    val photoUri: Uri = FileProvider.getUriForFile(
-        context, "${context.packageName}.provider", createImageFile(context)
-    )
+    val photoUri = remember { createImageUri(context) }
     val cameraLauncher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { success ->
-        if (success) {
-            imageSourceSelectorVisible = false
+        if (success && photoUri != null) {
             onEvent(CreateEvent.OnUserImageSelect(photoUri))
-        } else Timber.d("No media selected")
+            imageSourceSelectorVisible = false
+        } else {
+            Timber.d("Camera failed or cancelled")
+        }
     }
 
     val cameraPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
-        onResult = { isGranted -> if (isGranted) cameraLauncher.launch(photoUri) })
+        onResult = { isGranted -> if (isGranted) photoUri?.let { cameraLauncher.launch(it) } })
 
     val pickAudioLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
         uri?.let {
@@ -301,4 +304,17 @@ private fun CreateContent(
             onCameraSourceClick = { cameraPermissionLauncher.launch(Manifest.permission.CAMERA) },
             onGallerySourceClick = { pickMedia.launch(PickVisualMediaRequest(mediaType = ImageOnly)) })
     }
+}
+
+fun createImageUri(context: Context): Uri? {
+    val contentValues = ContentValues().apply {
+        put(MediaStore.Images.Media.DISPLAY_NAME, "IMG_${System.currentTimeMillis()}.jpg")
+        put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+        put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/MyPetAI")
+    }
+
+    return context.contentResolver.insert(
+        MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+        contentValues
+    )
 }
