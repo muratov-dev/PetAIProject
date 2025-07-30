@@ -55,6 +55,7 @@ import me.yeahapps.mypetai.core.ui.component.button.icon.PetAIIconButton
 import me.yeahapps.mypetai.core.ui.component.button.icon.PetAIIconButtonDefaults
 import me.yeahapps.mypetai.core.ui.theme.PetAITheme
 import me.yeahapps.mypetai.core.ui.utils.collectFlowWithLifecycle
+import me.yeahapps.mypetai.feature.subscription.domain.utils.toSubscriptionModel
 import me.yeahapps.mypetai.feature.subscription.ui.action.SubscriptionsAction
 import me.yeahapps.mypetai.feature.subscription.ui.component.SubscriptionItem
 import me.yeahapps.mypetai.feature.subscription.ui.event.SubscriptionsEvent
@@ -213,26 +214,23 @@ private fun SubscriptionsContent(
                         Text(text = "No subscriptions available", style = PetAITheme.typography.headlineMedium)
                     }
                 } else {
-                    state.subscriptionsList.forEach { product ->
-                        val offer = product.subscriptionOfferDetails?.firstOrNull() ?: return@forEach
-                        val pricePerWeek = getWeeklyPrice(product)
-                        val fullPrice = offer.pricingPhases.pricingPhaseList.firstOrNull()?.formattedPrice ?: "-"
-                        val title = if (getWeeks(product) > 1) "Yearly Access" else "Weekly Access"
-                        val subtitle = if (getWeeks(product) > 1) "Just $fullPrice per year" else "Cancel Anytime"
-
-                        val discount = if (state.subscriptionsList.size == 2 && getWeeks(product) > 1) {
-                            val weekly = state.subscriptionsList.firstOrNull { getWeeks(it) == 1 }
-                            weekly?.let { calculateDiscountPercent(product, it) }
-                        } else null
-
+                    state.subscriptionsList.map {
+                        it.toSubscriptionModel(
+                            allSubscriptions = state.subscriptionsList,
+                            selectedProduct = state.selectedDetails,
+                            getWeeklyPrice = ::getWeeklyPrice,
+                            calculateDiscountPercent = ::calculateDiscountPercent
+                        )
+                    }.forEach { model ->
                         SubscriptionItem(
                             modifier = Modifier.padding(horizontal = 16.dp),
-                            title = title,
-                            subtitle = subtitle,
-                            weeklyPrice = pricePerWeek,
-                            discountPercent = discount,
-                            selected = state.selectedDetails == product,
-                            onClick = { onEvent(SubscriptionsEvent.SelectSubscription(product)) })
+                            title = model.title,
+                            subtitle = model.subtitle,
+                            weeklyPrice = model.weeklyPrice,
+                            discountPercent = model.discountPercent,
+                            selected = model.isSelected,
+                            onClick = { onEvent(SubscriptionsEvent.SelectSubscription(model.product)) }
+                        )
                     }
                 }
             }

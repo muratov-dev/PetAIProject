@@ -11,15 +11,15 @@ plugins {
 
 android {
     namespace = "me.yeahapps.mypetai"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "me.yeahapps.mypetai"
         minSdk = 29
-        targetSdk = 35
+        targetSdk = 36
         val majorVersion = 1
         val minorVersion = 4
-        val patchVersion = 1
+        val patchVersion = 2
 
         versionCode = majorVersion * 10000 + minorVersion * 100 + patchVersion
         versionName = "${majorVersion}.${minorVersion}.${patchVersion}"
