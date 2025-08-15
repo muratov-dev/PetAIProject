@@ -34,9 +34,14 @@ class SubscriptionsViewModel @Inject constructor(
         viewModelScoped {
             billingManager.availableSubscriptions.collectLatest { subscriptions ->
                 subscriptions.forEach { product ->
-                    if (getWeeks(product) > 1) {
+                    val offer = product.subscriptionOfferDetails?.firstOrNull()
+                    val pricingPhases = offer?.pricingPhases?.pricingPhaseList
+                    pricingPhases?.let {
+                        val hasTrial = pricingPhases.size > 1 && pricingPhases.first().priceAmountMicros == 0L
+                        if (hasTrial) updateViewState { copy(selectedDetails = product) }
+                    } ?: if (getWeeks(product) > 1) {
                         updateViewState { copy(selectedDetails = product) }
-                    }
+                    } else return@forEach
                 }
                 updateViewState { copy(subscriptionsList = subscriptions) }
             }

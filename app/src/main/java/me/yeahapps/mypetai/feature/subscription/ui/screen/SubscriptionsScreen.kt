@@ -26,7 +26,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -79,6 +78,7 @@ fun SubscriptionsContainer(
             SubscriptionsAction.RelativeSubscriptionActivated -> {
                 Toast.makeText(context, "Subscription for relatives activated", Toast.LENGTH_SHORT).show()
             }
+
             null -> {}
         }
     }
@@ -195,11 +195,10 @@ private fun SubscriptionsContent(
                     color = PetAITheme.colors.textPrimary,
                     modifier = Modifier.clickable(enabled = relativesSubscriptionCount != 20) {
                         relativesSubscriptionCount++
-                        if(relativesSubscriptionCount == 20){
+                        if (relativesSubscriptionCount == 20) {
                             onEvent(SubscriptionsEvent.ActivateRelativesSubscription)
                         }
-                    }
-                )
+                    })
             }
             Spacer(Modifier.size(16.dp))
             CompositionLocalProvider(LocalContentColor provides PetAITheme.colors.textPrimary) {
@@ -229,8 +228,7 @@ private fun SubscriptionsContent(
                             weeklyPrice = model.weeklyPrice,
                             discountPercent = model.discountPercent,
                             selected = model.isSelected,
-                            onClick = { onEvent(SubscriptionsEvent.SelectSubscription(model.product)) }
-                        )
+                            onClick = { onEvent(SubscriptionsEvent.SelectSubscription(model.product)) })
                     }
                 }
             }
@@ -270,23 +268,25 @@ private fun SubscriptionsContent(
                     Text(text = "|")
                     Text(text = termsText)
                     Text(text = "|")
-                    Text(text = stringResource(R.string.common_limiter_version))
+                    Text(
+                        text = stringResource(R.string.common_limiter_version),
+                        modifier = Modifier.clickable { onEvent(SubscriptionsEvent.CloseScreen) })
                 }
             }
             Spacer(Modifier.size(16.dp))
         }
-        PetAIIconButton(
-            icon = R.drawable.ic_close,
-            modifier = Modifier
-                .statusBarsPadding()
-                .padding(16.dp)
-                .size(40.dp)
-                .align(Alignment.TopStart),
-            colors = PetAIIconButtonDefaults.colors(
-                containerColor = PetAITheme.colors.buttonSecondaryDefault,
-                contentColor = PetAITheme.colors.buttonTextPrimary
-            ),
-            onClick = { onEvent(SubscriptionsEvent.CloseScreen) })
+//        PetAIIconButton(
+//            icon = R.drawable.ic_close,
+//            modifier = Modifier
+//                .statusBarsPadding()
+//                .padding(16.dp)
+//                .size(40.dp)
+//                .align(Alignment.TopStart),
+//            colors = PetAIIconButtonDefaults.colors(
+//                containerColor = PetAITheme.colors.buttonSecondaryDefault,
+//                contentColor = PetAITheme.colors.buttonTextPrimary
+//            ),
+//            onClick = { })
     }
 }
 
