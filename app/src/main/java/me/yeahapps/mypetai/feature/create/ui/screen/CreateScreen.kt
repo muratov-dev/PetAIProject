@@ -3,6 +3,7 @@ package me.yeahapps.mypetai.feature.create.ui.screen
 import android.Manifest
 import android.content.ContentValues
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.provider.MediaStore
 import android.widget.Toast
@@ -248,7 +249,13 @@ private fun CreateContent(
                     .background(Color.White.copy(alpha = 0.15f), shape = RoundedCornerShape(20.dp))
                     .clip(RoundedCornerShape(20.dp))
                     .weight(1f)
-                    .clickable(enabled = !isConvertingAudio) { pickAudioLauncher.launch("audio/*") }
+                    .clickable(enabled = !isConvertingAudio) {
+                        if (context.canHandleGetContent("audio/*")) {
+                            pickAudioLauncher.launch("audio/*")
+                        } else {
+                            Toast.makeText(context, "No application for selecting audio", Toast.LENGTH_LONG).show()
+                        }
+                    }
                     .padding(vertical = 20.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
                 horizontalAlignment = Alignment.CenterHorizontally) {
@@ -318,4 +325,9 @@ fun createImageUri(context: Context): Uri? {
     return context.contentResolver.insert(
         MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues
     )
+}
+
+fun Context.canHandleGetContent(mimeType: String): Boolean {
+    val intent = Intent(Intent.ACTION_GET_CONTENT).addCategory(Intent.CATEGORY_OPENABLE).setType(mimeType)
+    return intent.resolveActivity(packageManager) != null
 }
