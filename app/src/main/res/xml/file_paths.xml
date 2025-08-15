@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <paths>
-    <external-files-path name="images" path="Pictures/" />
-    <files-path name="shared" path="." />
+    <external-files-path
+        name="images"
+        path="Pictures/" />
+    <files-path
+        name="shared"
+        path="." />
+    <cache-path
+        name="internal_cache"
+        path="." />
 </paths>
