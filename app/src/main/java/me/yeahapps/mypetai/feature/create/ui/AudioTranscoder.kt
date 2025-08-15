@@ -92,7 +92,15 @@ class AudioTranscoder(
                     if (encoderInputIndex >= 0) {
                         val inputBuf = encoderInputBuffers[encoderInputIndex]
                         inputBuf.clear()
-                        inputBuf.put(decodedBuffer)
+                        if (decodedBuffer.remaining() <= inputBuf.remaining()) {
+                            inputBuf.put(decodedBuffer)
+                        } else {
+                            // Записываем только то, что влезает
+                            val oldLimit = decodedBuffer.limit()
+                            decodedBuffer.limit(decodedBuffer.position() + inputBuf.remaining())
+                            inputBuf.put(decodedBuffer)
+                            decodedBuffer.limit(oldLimit)
+                        }
 
                         encoder.queueInputBuffer(
                             encoderInputIndex, 0, bufferInfo.size,
