@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.ContentValues
 import android.content.Context
 import android.net.Uri
-import android.os.Build
 import android.provider.MediaStore
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -46,7 +45,6 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import androidx.core.content.FileProvider
 import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
@@ -75,7 +73,6 @@ import me.yeahapps.mypetai.feature.create.ui.component.create.SelectedAudioCard
 import me.yeahapps.mypetai.feature.create.ui.event.CreateEvent
 import me.yeahapps.mypetai.feature.create.ui.state.CreateState
 import me.yeahapps.mypetai.feature.create.ui.viewmodel.CreateViewModel
-import me.yeahapps.mypetai.feature.discover.ui.screen.createImageFile
 import timber.log.Timber
 import java.io.File
 
@@ -175,8 +172,13 @@ private fun CreateContent(
     }
 
     val cameraPermissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission(),
-        onResult = { isGranted -> if (isGranted) photoUri?.let { cameraLauncher.launch(it) } })
+        contract = ActivityResultContracts.RequestPermission(), onResult = { isGranted ->
+            try {
+                if (isGranted) photoUri?.let { cameraLauncher.launch(it) }
+            } catch (_: Exception) {
+                Toast.makeText(context, "Error when opening the camera", Toast.LENGTH_SHORT).show()
+            }
+        })
 
     val pickAudioLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
         uri?.let {
@@ -314,7 +316,6 @@ fun createImageUri(context: Context): Uri? {
     }
 
     return context.contentResolver.insert(
-        MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-        contentValues
+        MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues
     )
 }
