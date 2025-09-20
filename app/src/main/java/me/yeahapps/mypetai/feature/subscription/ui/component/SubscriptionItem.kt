@@ -49,6 +49,7 @@ fun SubscriptionItem(
             Text(text = title, color = Color.White, style = PetAITheme.typography.textRegular)
             Text(text = subtitle, color = Color.White.copy(alpha = 0.5f), style = PetAITheme.typography.labelRegular)
         }
+
         discountPercent?.let {
             Text(
                 text = "${it}% OFF",
@@ -61,19 +62,21 @@ fun SubscriptionItem(
             )
         }
 
-        Column(horizontalAlignment = Alignment.End) {
-            Text(
-                text = weeklyPrice,
-                textAlign = TextAlign.End,
-                color = Color.White,
-                style = PetAITheme.typography.textRegular
-            )
-            Text(
-                text = "per week",
-                textAlign = TextAlign.End,
-                color = Color.White.copy(alpha = 0.5f),
-                style = PetAITheme.typography.labelRegular
-            )
+        if (weeklyPrice != "0.00"){
+            Column(horizontalAlignment = Alignment.End) {
+                Text(
+                    text = weeklyPrice,
+                    textAlign = TextAlign.End,
+                    color = Color.White,
+                    style = PetAITheme.typography.textRegular
+                )
+                Text(
+                    text = "per week",
+                    textAlign = TextAlign.End,
+                    color = Color.White.copy(alpha = 0.5f),
+                    style = PetAITheme.typography.labelRegular
+                )
+            }
         }
     }
 }

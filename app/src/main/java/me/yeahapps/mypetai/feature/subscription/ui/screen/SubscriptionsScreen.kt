@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalTextStyle
@@ -50,8 +49,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.android.billingclient.api.ProductDetails
 import me.yeahapps.mypetai.R
 import me.yeahapps.mypetai.core.ui.component.button.filled.PetAIPrimaryButton
-import me.yeahapps.mypetai.core.ui.component.button.icon.PetAIIconButton
-import me.yeahapps.mypetai.core.ui.component.button.icon.PetAIIconButtonDefaults
 import me.yeahapps.mypetai.core.ui.theme.PetAITheme
 import me.yeahapps.mypetai.core.ui.utils.collectFlowWithLifecycle
 import me.yeahapps.mypetai.feature.subscription.domain.utils.toSubscriptionModel
@@ -90,9 +87,7 @@ fun SubscriptionsContainer(
 
 @Composable
 private fun SubscriptionsContent(
-    modifier: Modifier = Modifier,
-    state: SubscriptionsState = SubscriptionsState(),
-    onEvent: (SubscriptionsEvent) -> Unit = {}
+    modifier: Modifier = Modifier, state: SubscriptionsState = SubscriptionsState(), onEvent: (SubscriptionsEvent) -> Unit = {}
 ) {
     val activity = LocalActivity.current
     var relativesSubscriptionCount by remember { mutableIntStateOf(0) }
@@ -130,9 +125,7 @@ private fun SubscriptionsContent(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Upgrade Plan Now!",
-                style = PetAITheme.typography.headlineBold,
-                color = PetAITheme.colors.textPrimary
+                text = "Upgrade Plan Now!", style = PetAITheme.typography.headlineBold, color = PetAITheme.colors.textPrimary
             )
             Spacer(Modifier.size(16.dp))
             Row(
@@ -234,20 +227,17 @@ private fun SubscriptionsContent(
             }
             Spacer(Modifier.size(24.dp))
             Text(
-                text = "Non commitment - cancel anytime",
+                text = "The trial automatically renews into a paid subscription\nand will continue to automatically renew.\nCancel anytime.",
                 textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.padding(horizontal = 16.dp).fillMaxWidth(),
                 color = PetAITheme.colors.textPrimary.copy(alpha = 0.5f),
                 style = PetAITheme.typography.buttonTextRegular
             )
             Spacer(Modifier.size(16.dp))
             PetAIPrimaryButton(
-                centerContent = stringResource(R.string.common_continue),
-                enabled = state.selectedDetails != null,
-                onClick = {
+                centerContent = stringResource(R.string.common_continue), enabled = state.selectedDetails != null, onClick = {
                     activity?.let { onEvent(SubscriptionsEvent.LaunchPurchaseFlow(it, state.selectedDetails!!)) }
-                },
-                modifier = Modifier
+                }, modifier = Modifier
                     .padding(horizontal = 16.dp)
                     .fillMaxWidth()
             )
@@ -261,8 +251,7 @@ private fun SubscriptionsContent(
                     LocalContentColor provides PetAITheme.colors.buttonTextSecondary,
                     LocalTextStyle provides PetAITheme.typography.labelRegular
                 ) {
-                    val policyText =
-                        AnnotatedString.fromHtml(htmlString = stringResource(R.string.common_privacy_policy))
+                    val policyText = AnnotatedString.fromHtml(htmlString = stringResource(R.string.common_privacy_policy))
                     val termsText = AnnotatedString.fromHtml(htmlString = stringResource(R.string.common_terms_of_use))
                     Text(text = policyText)
                     Text(text = "|")
@@ -322,14 +311,12 @@ fun calculateDiscountPercent(base: ProductDetails, compared: ProductDetails): In
 }
 
 fun extractMicros(product: ProductDetails): Long {
-    return product.subscriptionOfferDetails?.firstOrNull()?.pricingPhases?.pricingPhaseList?.firstOrNull()?.priceAmountMicros
-        ?: 0
+    return product.subscriptionOfferDetails?.firstOrNull()?.pricingPhases?.pricingPhaseList?.firstOrNull()?.priceAmountMicros ?: 0
 }
 
 fun getWeeks(product: ProductDetails): Int {
     val period =
-        product.subscriptionOfferDetails?.firstOrNull()?.pricingPhases?.pricingPhaseList?.firstOrNull()?.billingPeriod
-            ?: "P1W"
+        product.subscriptionOfferDetails?.firstOrNull()?.pricingPhases?.pricingPhaseList?.firstOrNull()?.billingPeriod ?: "P1W"
 
     return when {
         period.contains("Y") -> 52
