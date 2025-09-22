@@ -21,7 +21,7 @@ fun ProductDetails.toSubscriptionModel(
     val weeks = parseWeeksFromPeriod(billingPeriod)
 
     val title = when {
-        hasTrial -> "Free Trial (${pricingPhases.first().billingPeriod})"
+        hasTrial -> "Free Trial"
         weeks >= 52 -> "Yearly Access"
         weeks >= 4 -> "Monthly Access"
         weeks == 1 -> "Weekly Access"
